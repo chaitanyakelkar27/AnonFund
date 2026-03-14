@@ -26,6 +26,9 @@
         "paths": {
             "@/*": [
                 "./src/*"
+            ],
+            "@anon-aadhaar/core": [
+                "./src/types/anon-aadhaar-core"
             ]
         }
     },

@@ -2,7 +2,7 @@
 
 import { ReactNode, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AnonAadhaarProvider } from "@anon-aadhaar/react/dist/index.js";
+import { AnonAadhaarProvider } from "@anon-aadhaar/react";
 import { WagmiProvider } from "wagmi";
 import { initializeWeb3Modal, wagmiConfig } from "@/lib/wagmi";
 

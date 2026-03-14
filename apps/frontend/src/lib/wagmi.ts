@@ -1,7 +1,7 @@
 "use client";
 
 import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
-import { mainnet, polygon, sepolia } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 
 export const appName = "AnonFund";
 
@@ -15,7 +15,7 @@ const metadata = {
     icons: ["https://avatars.githubusercontent.com/u/37784886"]
 };
 
-export const chains = [mainnet, polygon, sepolia] as const;
+export const chains = [sepolia] as const;
 
 export const wagmiConfig = defaultWagmiConfig({
     chains,
