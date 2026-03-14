@@ -1,17 +1,4 @@
-import { Manrope, Space_Grotesk } from "next/font/google";
 import styles from "./page.module.css";
-
-const headingFont = Space_Grotesk({
-    subsets: ["latin"],
-    weight: ["500", "700"],
-    variable: "--font-heading"
-});
-
-const bodyFont = Manrope({
-    subsets: ["latin"],
-    weight: ["400", "500", "700"],
-    variable: "--font-body"
-});
 
 const features = [
     {
@@ -115,7 +102,7 @@ const layers = [
 
 export default function HomePage(): React.JSX.Element {
     return (
-        <main className={`${styles.page} ${headingFont.variable} ${bodyFont.variable}`}>
+        <main className={styles.page}>
             <div className={styles.backgroundGlow} aria-hidden="true" />
 
             <header className={styles.header}>
