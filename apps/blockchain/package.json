@@ -1,0 +1,17 @@
+{
+    "name": "@anonfund/blockchain",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build": "hardhat compile",
+        "clean": "hardhat clean",
+        "test": "hardhat test",
+        "deploy": "hardhat run scripts/deploy.ts"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+        "hardhat": "^2.24.3",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.8.3"
+    }
+}
