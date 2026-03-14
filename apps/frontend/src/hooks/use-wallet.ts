@@ -9,6 +9,8 @@ initializeWeb3Modal();
 type VerificationState = {
     isVerified: boolean;
     voiceCredits: number;
+    nullifierSeed: string | null;
+    nullifierKey: string | null;
 };
 
 type UseWalletResult = VerificationState & {
@@ -18,6 +20,7 @@ type UseWalletResult = VerificationState & {
     connect: () => Promise<void>;
     disconnect: () => void;
     markVerified: () => void;
+    setVerificationData: (data: { nullifierSeed: string; nullifierKey: string }) => void;
     shortAddress: string;
     openConnectModal: () => Promise<void>;
 };
@@ -26,7 +29,9 @@ const STORAGE_KEY = "anonfund.wallet.verification";
 
 const initialState: VerificationState = {
     isVerified: false,
-    voiceCredits: 0
+    voiceCredits: 0,
+    nullifierSeed: null,
+    nullifierKey: null
 };
 
 export function useWallet(): UseWalletResult {
@@ -99,6 +104,16 @@ export function useWallet(): UseWalletResult {
         }));
     }, []);
 
+    const setVerificationData = useCallback((data: { nullifierSeed: string; nullifierKey: string }) => {
+        setState((current) => ({
+            ...current,
+            isVerified: true,
+            voiceCredits: Math.max(current.voiceCredits, 100),
+            nullifierSeed: data.nullifierSeed,
+            nullifierKey: data.nullifierKey
+        }));
+    }, []);
+
     const shortAddress = useMemo(() => {
         if (loading || !address) {
             return "Not connected";
@@ -118,6 +133,7 @@ export function useWallet(): UseWalletResult {
         connect,
         disconnect: handleDisconnect,
         markVerified,
+        setVerificationData,
         shortAddress,
         openConnectModal
     };

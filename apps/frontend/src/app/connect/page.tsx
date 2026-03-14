@@ -56,7 +56,7 @@ export default function ConnectPage(): React.JSX.Element {
                         Disconnect
                     </button>
                     <Link href="/register" className={styles.secondary} aria-disabled={!isConnected}>
-                        Continue To Verification
+                        Continue To Verify
                     </Link>
                 </div>
             </section>
