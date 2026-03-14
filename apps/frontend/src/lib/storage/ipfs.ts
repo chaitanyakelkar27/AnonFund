@@ -13,7 +13,7 @@ export async function uploadToIPFS(data: object): Promise<string> {
             body: JSON.stringify({
                 pinataContent: data,
                 pinataMetadata: {
-                    name: `zerotrace-project-${Date.now()}`,
+                    name: `anonfund-project-${Date.now()}`,
                 },
             }),
         });
