@@ -73,19 +73,24 @@ export function useWallet(): UseWalletResult {
     }, [state, loading, address]);
 
     const connect = useCallback(async () => {
+        const injectedConnector = connectors.find((connector) => connector.type === "injected") ?? connectors[0];
+
+        if (injectedConnector) {
+            try {
+                await connectAsync({ connector: injectedConnector });
+                return;
+            } catch {
+                // Fall back to modal if direct injected connection fails.
+            }
+        }
+
         const opened = await openWalletModal();
 
         if (opened) {
             return;
         }
 
-        const injectedConnector = connectors.find((connector) => connector.type === "injected") ?? connectors[0];
-
-        if (!injectedConnector) {
-            throw new Error("No wallet connector available. Install MetaMask or add a wallet connector.");
-        }
-
-        await connectAsync({ connector: injectedConnector });
+        throw new Error("No wallet connector available. Install MetaMask or add a wallet connector.");
     }, [connectAsync, connectors]);
 
     const openConnectModal = useCallback(async () => {

@@ -11,7 +11,7 @@ export const walletConnectProjectId =
 const metadata = {
     name: appName,
     description: "AnonFund privacy-preserving quadratic funding",
-    url: "http://localhost:3000",
+    url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
     icons: ["https://avatars.githubusercontent.com/u/37784886"]
 };
 
