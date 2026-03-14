@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
+
 /*
     Copyright 2021 0KIMS association.
 
@@ -42,32 +43,32 @@ contract VotingVerifier {
     uint256 constant deltay1 = 4082367875863433681332203403145435568316851327593401208105741076214120093531;
     uint256 constant deltay2 = 8495653923123431417604973247489272438418190587263600148770280649306958101930;
 
-
+    
     uint256 constant IC0x = 6549418003857453492564640896218837480553162924925777655527161854656644553477;
     uint256 constant IC0y = 9784980555213008131140285072443558520165099897749499445222530779039166795051;
-
+    
     uint256 constant IC1x = 14436968704413170896472836065527835947546934881308647914878326675172391559011;
     uint256 constant IC1y = 19403024348968843737232800740916388679703175902372165552727049269105882358097;
-
+    
     uint256 constant IC2x = 9598791741472886453375597703887747789928540425702192693941690255433282218251;
     uint256 constant IC2y = 4391341695640267156948532602013225487609398812200283428726913303679279230856;
-
+    
     uint256 constant IC3x = 7478568969081889643987790885928186157567013506224744518473735492618693377270;
     uint256 constant IC3y = 5723644888548297145474091964831133642774236521127021555718369065709706689225;
-
+    
     uint256 constant IC4x = 1091310549689112399262212115291850013328669259408724464830704293696566058771;
     uint256 constant IC4y = 10850861249229008300720540641209808077746248404416803915166777356180651542760;
-
+    
     uint256 constant IC5x = 666548390632697099666115266980603623115383347942932110342889959846041401333;
     uint256 constant IC5y = 5751574795147455024151267405828952725153380791438845936773158217500410475612;
-
+    
     uint256 constant IC6x = 12763347997528753545422214012223154358407113832336369926052469544495999517896;
     uint256 constant IC6y = 15474045670570888139464842709294263287614547577971935275122909011404610181022;
-
+    
     uint256 constant IC7x = 10457146906506391713401127487528697458407803967157766925304954208766745000678;
     uint256 constant IC7y = 5716247822836584562171716563285442086620499755071422474002513070888372487266;
-
-
+    
+ 
     // Memory data
     uint16 constant pVk = 0;
     uint16 constant pPairing = 128;
@@ -82,7 +83,7 @@ contract VotingVerifier {
                     return(0, 0x20)
                 }
             }
-
+            
             // G1 function to multiply a G1 value(x,y) to value in an address
             function g1_mulAccC(pR, x, y, s) {
                 let success
@@ -117,21 +118,21 @@ contract VotingVerifier {
                 mstore(add(_pVk, 32), IC0y)
 
                 // Compute the linear combination vk_x
-
+                
                 g1_mulAccC(_pVk, IC1x, IC1y, calldataload(add(pubSignals, 0)))
-
+                
                 g1_mulAccC(_pVk, IC2x, IC2y, calldataload(add(pubSignals, 32)))
-
+                
                 g1_mulAccC(_pVk, IC3x, IC3y, calldataload(add(pubSignals, 64)))
-
+                
                 g1_mulAccC(_pVk, IC4x, IC4y, calldataload(add(pubSignals, 96)))
-
+                
                 g1_mulAccC(_pVk, IC5x, IC5y, calldataload(add(pubSignals, 128)))
-
+                
                 g1_mulAccC(_pVk, IC6x, IC6y, calldataload(add(pubSignals, 160)))
-
+                
                 g1_mulAccC(_pVk, IC7x, IC7y, calldataload(add(pubSignals, 192)))
-
+                
 
                 // -A
                 mstore(_pPairing, calldataload(pA))
@@ -183,22 +184,22 @@ contract VotingVerifier {
             let pMem := mload(0x40)
             mstore(0x40, add(pMem, pLastMem))
 
-            // Validate that all evaluations in F
-
+            // Validate that all evaluations ∈ F
+            
             checkField(calldataload(add(_pubSignals, 0)))
-
+            
             checkField(calldataload(add(_pubSignals, 32)))
-
+            
             checkField(calldataload(add(_pubSignals, 64)))
-
+            
             checkField(calldataload(add(_pubSignals, 96)))
-
+            
             checkField(calldataload(add(_pubSignals, 128)))
-
+            
             checkField(calldataload(add(_pubSignals, 160)))
-
+            
             checkField(calldataload(add(_pubSignals, 192)))
-
+            
 
             // Validate all evaluations
             let isValid := checkPairing(_pA, _pB, _pC, _pubSignals, pMem)
