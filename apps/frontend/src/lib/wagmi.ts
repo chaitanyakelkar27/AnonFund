@@ -1,6 +1,8 @@
 "use client";
 
-import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
+import { createWeb3Modal } from "@web3modal/wagmi/react";
+import { injected, walletConnect } from "wagmi/connectors";
+import { createConfig, http } from "wagmi";
 import { sepolia } from "wagmi/chains";
 
 export const appName = "AnonFund";
@@ -17,14 +19,19 @@ const metadata = {
 
 export const chains = [sepolia] as const;
 
-export const wagmiConfig = defaultWagmiConfig({
+export const wagmiConfig = createConfig({
     chains,
-    projectId: walletConnectProjectId,
-    metadata,
-    enableCoinbase: true,
-    enableEIP6963: true,
-    enableInjected: true,
-    enableWalletConnect: true
+    connectors: [
+        injected(),
+        walletConnect({
+            projectId: walletConnectProjectId,
+            metadata,
+            showQrModal: false
+        })
+    ],
+    transports: {
+        [sepolia.id]: http()
+    }
 });
 
 let modalInitialized = false;

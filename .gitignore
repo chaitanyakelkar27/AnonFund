@@ -15,6 +15,11 @@ build/
 .turbo/
 coverage/
 
+# Hardhat generated outputs
+apps/blockchain/artifacts/
+apps/blockchain/cache/
+apps/blockchain/typechain-types/
+
 # TypeScript incremental files
 *.tsbuildinfo
 

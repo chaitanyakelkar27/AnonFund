@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { initializeWeb3Modal, openWalletModal } from "@/lib/wagmi";
 
 initializeWeb3Modal();
@@ -37,7 +37,6 @@ const initialState: VerificationState = {
 export function useWallet(): UseWalletResult {
     const { address, isConnected } = useAccount();
     const { disconnect } = useDisconnect();
-    const { connectAsync, connectors } = useConnect();
 
     const [state, setState] = useState<VerificationState>(initialState);
     const [loading, setLoading] = useState(true);
@@ -73,17 +72,6 @@ export function useWallet(): UseWalletResult {
     }, [state, loading, address]);
 
     const connect = useCallback(async () => {
-        const injectedConnector = connectors.find((connector) => connector.type === "injected") ?? connectors[0];
-
-        if (injectedConnector) {
-            try {
-                await connectAsync({ connector: injectedConnector });
-                return;
-            } catch {
-                // Fall back to modal if direct injected connection fails.
-            }
-        }
-
         const opened = await openWalletModal();
 
         if (opened) {
@@ -91,7 +79,7 @@ export function useWallet(): UseWalletResult {
         }
 
         throw new Error("No wallet connector available. Install MetaMask or add a wallet connector.");
-    }, [connectAsync, connectors]);
+    }, []);
 
     const openConnectModal = useCallback(async () => {
         await connect();
