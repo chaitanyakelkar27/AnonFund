@@ -1,0 +1,725 @@
+.page {
+    min-height: 100vh;
+    padding: clamp(1rem, 2vw, 2rem);
+    background:
+        radial-gradient(80rem 30rem at 50% -5%, rgba(45, 108, 255, 0.16), transparent 60%),
+        linear-gradient(180deg, #070c17 0%, #05070f 100%);
+    color: #ecf1ff;
+    font-family: var(--app-font-body);
+}
+
+.shell {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+}
+
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    margin-bottom: 1.1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.65rem 0;
+    background: rgba(6, 9, 17, 0.9);
+    backdrop-filter: blur(6px);
+}
+
+.navInner {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--app-font-heading);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.brandMark {
+    display: grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(145deg, #0d1731, #102658);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #7fb6ff;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.navActions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navBtn,
+.chip {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 0.62rem;
+    padding: 0.38rem 0.7rem;
+    font-size: var(--fs-label);
+    color: #deebff;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.navBtn {
+    cursor: pointer;
+    transition: background-color 160ms ease;
+}
+
+.navBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.main {
+    display: grid;
+    gap: 1rem;
+}
+
+.heroRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.8rem;
+}
+
+.title {
+    font-family: var(--app-font-heading);
+    margin: 0;
+    font-size: var(--fs-title);
+    line-height: 1.08;
+}
+
+.subtitle {
+    margin: 0.45rem 0 0;
+    font-size: var(--fs-subtitle);
+    color: #b8c3db;
+}
+
+.statusPill {
+    border-radius: 999px;
+    padding: 0.42rem 0.8rem;
+    border: 1px solid rgba(88, 224, 154, 0.5);
+    color: #bbf7d6;
+    background: rgba(22, 101, 52, 0.35);
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.grid3,
+.grid2,
+.projectGrid,
+.infoGrid {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.grid3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.infoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card,
+.panel,
+.projectCard {
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 0.9rem;
+    background: linear-gradient(160deg, rgba(20, 27, 42, 0.95), rgba(14, 18, 30, 0.95));
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.card,
+.panel {
+    padding: 1rem;
+}
+
+.cardLabel {
+    color: #9caac4;
+    font-size: var(--fs-label);
+}
+
+.cardValue {
+    margin-top: 0.45rem;
+    font-size: clamp(1.85rem, 3vw, 2.35rem);
+    font-weight: 800;
+}
+
+.cardHint {
+    margin-top: 0.2rem;
+    color: #aebbd6;
+    font-size: 0.92rem;
+}
+
+.sectionTitle {
+    font-family: var(--app-font-heading);
+    margin: 0;
+    font-size: var(--fs-section);
+}
+
+.sectionLead {
+    margin: 0.35rem 0 0;
+    color: #b8c3db;
+}
+
+.bodyText {
+    margin: 0.8rem 0 0;
+    color: #c6d2eb;
+    font-size: 1.02rem;
+    line-height: 1.5;
+}
+
+.buttonPrimary,
+.buttonSecondary,
+.smallBtn,
+.voteBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.7rem;
+    border: 0;
+    padding: 0.7rem 1rem;
+    font-size: 0.94rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 160ms ease, opacity 160ms ease, background-color 160ms ease;
+}
+
+.buttonPrimary,
+.voteBtn {
+    background: linear-gradient(160deg, #2d6cff, #1d4ede);
+    color: #fff;
+}
+
+.buttonSecondary,
+.smallBtn {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ecf1ff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.buttonFull {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.buttonPrimary:hover,
+.buttonSecondary:hover,
+.smallBtn:hover,
+.voteBtn:hover {
+    transform: translateY(-1px);
+}
+
+.buttonPrimary:disabled,
+.buttonSecondary:disabled,
+.smallBtn:disabled,
+.voteBtn:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.list {
+    margin: 0.7rem 0 0;
+    padding-left: 1rem;
+    color: #c6d2eb;
+    line-height: 1.7;
+}
+
+.muted {
+    color: #a5b2cb;
+}
+
+.emptyState {
+    margin-top: 0.8rem;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 0.9rem;
+    background: rgba(10, 14, 25, 0.75);
+    text-align: center;
+    padding: 2.8rem 1rem;
+}
+
+.emptyState h3 {
+    font-family: var(--app-font-heading);
+    margin: 0.5rem 0 0;
+    font-size: 1.9rem;
+}
+
+.emptyState p {
+    margin: 0.4rem 0 0;
+    color: #aebbd6;
+}
+
+.backLink {
+    display: inline-flex;
+    margin-bottom: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.65rem;
+    padding: 0.35rem 0.75rem;
+    color: #d8e4fc;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.filterBar {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: 0.95rem;
+    padding: 0.75rem;
+}
+
+.input,
+.select {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.6rem;
+    padding: 0.6rem 0.7rem;
+    background: rgba(8, 12, 22, 0.78);
+    color: #e8efff;
+    font-size: 0.9rem;
+}
+
+.input::placeholder {
+    color: #8f9fbe;
+}
+
+.infoChip {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.6rem;
+    padding: 0.6rem 0.7rem;
+    font-size: 0.9rem;
+    background: rgba(8, 12, 22, 0.78);
+    color: #dbe8ff;
+}
+
+.countText {
+    margin: 0.75rem 0 0;
+    color: #aab7d1;
+    font-size: 0.9rem;
+}
+
+.banner,
+.bannerError,
+.bannerSuccess,
+.bannerWarn {
+    margin-top: 0.7rem;
+    border-radius: 0.7rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.92rem;
+}
+
+.bannerError {
+    border-color: rgba(220, 38, 38, 0.5);
+    background: rgba(127, 29, 29, 0.35);
+    color: #fecaca;
+}
+
+.bannerSuccess {
+    border-color: rgba(22, 163, 74, 0.5);
+    background: rgba(22, 101, 52, 0.35);
+    color: #bbf7d6;
+}
+
+.bannerWarn {
+    border-color: rgba(217, 119, 6, 0.5);
+    background: rgba(120, 53, 15, 0.35);
+    color: #fde68a;
+}
+
+.projectGrid {
+    margin-top: 0.85rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.projectCard {
+    overflow: hidden;
+}
+
+.projectImage,
+.projectFallback {
+    height: 11rem;
+    width: 100%;
+}
+
+.projectImage {
+    object-fit: cover;
+}
+
+.projectFallback {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 0.7rem;
+    color: #cfdefa;
+    background: linear-gradient(150deg, rgba(37, 99, 235, 0.2), rgba(8, 145, 178, 0.2));
+}
+
+.projectBody {
+    padding: 0.95rem;
+}
+
+.projectHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.projectTitle {
+    margin: 0;
+    font-size: 1.42rem;
+}
+
+.projectDescription {
+    margin: 0.6rem 0 0;
+    color: #aebbd6;
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+.statusBadge {
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.statusPending {
+    color: #fde68a;
+    background: rgba(113, 63, 18, 0.35);
+}
+
+.statusActive {
+    color: #bbf7d6;
+    background: rgba(21, 128, 61, 0.35);
+}
+
+.statusFunded {
+    color: #bfdbfe;
+    background: rgba(30, 64, 175, 0.35);
+}
+
+.statusCompleted {
+    color: #ddd6fe;
+    background: rgba(76, 29, 149, 0.35);
+}
+
+.progressRow {
+    margin-top: 0.7rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #c5d3ed;
+}
+
+.progressTrack {
+    margin-top: 0.32rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(160deg, #2d6cff, #1d4ede);
+}
+
+.metaRow {
+    margin-top: 0.72rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+}
+
+.metaLabel {
+    color: #8fa0bf;
+    font-size: 0.78rem;
+}
+
+.metaValue {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.metaFooter {
+    margin-top: 0.72rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.categoryTag {
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.23);
+    padding: 0.2rem 0.55rem;
+    font-size: 0.75rem;
+    color: #d8e4fc;
+}
+
+.projectId {
+    color: #8fa0bf;
+    font-size: 0.82rem;
+}
+
+.votePanel {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.85rem 0.95rem 0.95rem;
+    background: rgba(8, 11, 20, 0.72);
+}
+
+.voteHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.voteTitle {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.voteCost {
+    color: #9eb0d1;
+    font-size: 0.8rem;
+}
+
+.voteControls {
+    margin-top: 0.56rem;
+    display: flex;
+    align-items: center;
+    gap: 0.42rem;
+}
+
+.counter {
+    min-width: 1.4rem;
+    text-align: center;
+    font-weight: 700;
+}
+
+.registerNote {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.88rem;
+    color: #aebbd6;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.registerNote a {
+    color: #8db4ff;
+}
+
+.form {
+    margin-top: 0.6rem;
+    display: grid;
+    gap: 0.95rem;
+}
+
+.formPanel {
+    padding: 1rem;
+}
+
+.panelTitle {
+    font-family: var(--app-font-heading);
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.panelLead {
+    margin: 0.35rem 0 0;
+    color: #aebbd6;
+    font-size: 0.92rem;
+}
+
+.fields {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.7rem;
+}
+
+.field {
+    display: grid;
+    gap: 0.36rem;
+}
+
+.field label {
+    font-size: 0.9rem;
+    color: #d7e3fb;
+}
+
+.textarea {
+    min-height: 6.6rem;
+    resize: vertical;
+}
+
+.gridTwo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+}
+
+.gridDate {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    gap: 0.7rem;
+}
+
+.fileInfo {
+    margin: 0.2rem 0 0;
+    color: #9eb0d1;
+    font-size: 0.78rem;
+}
+
+.preview {
+    margin-top: 0.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.7rem;
+    overflow: hidden;
+}
+
+.preview img {
+    width: 100%;
+    max-height: 14rem;
+    object-fit: cover;
+}
+
+.formActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.ghostBtn {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.7rem;
+    padding: 0.65rem 0.95rem;
+    color: #d8e4fc;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.checking {
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 0.9rem;
+    background: rgba(14, 18, 30, 0.95);
+    padding: 1rem;
+}
+
+@media (max-width: 1000px) {
+    .projectGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filterBar {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .heroRow {
+        flex-direction: column;
+    }
+
+    .grid3,
+    .grid2,
+    .projectGrid,
+    .infoGrid,
+    .gridTwo,
+    .gridDate,
+    .filterBar {
+        grid-template-columns: 1fr;
+    }
+
+    .formActions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .navInner {
+        flex-wrap: wrap;
+    }
+}
+
+:global(html[data-theme="light"]) .page {
+    background:
+        radial-gradient(80rem 30rem at 50% -5%, rgba(45, 108, 255, 0.12), transparent 60%),
+        linear-gradient(180deg, #f8fbff 0%, #edf2ff 100%);
+    color: #0f172a;
+}
+
+:global(html[data-theme="light"]) .nav {
+    border-bottom-color: rgba(15, 23, 42, 0.14);
+    background: rgba(255, 255, 255, 0.85);
+}
+
+:global(html[data-theme="light"]) .navBtn,
+:global(html[data-theme="light"]) .chip,
+:global(html[data-theme="light"]) .backLink,
+:global(html[data-theme="light"]) .ghostBtn,
+:global(html[data-theme="light"]) .input,
+:global(html[data-theme="light"]) .select,
+:global(html[data-theme="light"]) .infoChip {
+    border-color: rgba(15, 23, 42, 0.18);
+    color: #1e293b;
+    background: rgba(255, 255, 255, 0.85);
+}
+
+:global(html[data-theme="light"]) .card,
+:global(html[data-theme="light"]) .panel,
+:global(html[data-theme="light"]) .projectCard,
+:global(html[data-theme="light"]) .checking,
+:global(html[data-theme="light"]) .votePanel,
+:global(html[data-theme="light"]) .registerNote,
+:global(html[data-theme="light"]) .emptyState {
+    border-color: rgba(15, 23, 42, 0.14);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(243, 247, 255, 0.96));
+    box-shadow: inset 0 1px rgba(15, 23, 42, 0.04);
+}
+
+:global(html[data-theme="light"]) .subtitle,
+:global(html[data-theme="light"]) .sectionLead,
+:global(html[data-theme="light"]) .bodyText,
+:global(html[data-theme="light"]) .projectDescription,
+:global(html[data-theme="light"]) .muted,
+:global(html[data-theme="light"]) .cardHint,
+:global(html[data-theme="light"]) .metaLabel,
+:global(html[data-theme="light"]) .projectId,
+:global(html[data-theme="light"]) .countText,
+:global(html[data-theme="light"]) .fileInfo,
+:global(html[data-theme="light"]) .voteCost {
+    color: #475569;
+}
+
+:global(html[data-theme="light"]) .cardLabel,
+:global(html[data-theme="light"]) .progressRow,
+:global(html[data-theme="light"]) .registerNote a,
+:global(html[data-theme="light"]) .categoryTag {
+    color: #334155;
+}
+
+:global(html[data-theme="light"]) .progressTrack {
+    background: rgba(15, 23, 42, 0.12);
+}

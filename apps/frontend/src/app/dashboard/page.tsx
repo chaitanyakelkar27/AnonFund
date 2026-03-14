@@ -1,27 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useChainId } from "wagmi";
 import { useWallet } from "@/hooks/use-wallet";
-import VotingInterface from "@/components/voting-interface";
-import styles from "../flow.module.css";
-
-type Submission = {
-    name: string;
-    category: string;
-    requestedEth: string;
-};
+import { ProtectedRoute } from "@/components/protected-route";
+import { ModeToggle } from "@/components/mode-toggle";
+import { VOTER_REGISTRY_ADDRESS } from "@/contracts";
+import styles from "./dashboard.module.css";
 
 export default function DashboardPage(): React.JSX.Element {
     const router = useRouter();
-    const { loading, isConnected, isVerified, voiceCredits, shortAddress, nullifierSeed, nullifierKey } = useWallet();
-    const [hasGeneratedProof, setHasGeneratedProof] = useState(false);
+    const chainId = useChainId();
+    const { loading, isConnected, isVerified, voiceCredits, shortAddress, connect, disconnect } = useWallet();
+    const [hasStoredProof, setHasStoredProof] = useState(false);
     const [proofChecked, setProofChecked] = useState(false);
-    const [projectName, setProjectName] = useState("");
-    const [category, setCategory] = useState("Public Goods");
-    const [requestedEth, setRequestedEth] = useState("");
-    const [submissions, setSubmissions] = useState<Submission[]>([]);
+    const [registrationDate, setRegistrationDate] = useState<string>("-");
+    const [storedNullifier, setStoredNullifier] = useState<string>("-");
+    const [totalVoters, setTotalVoters] = useState(0);
 
     useEffect(() => {
         if (typeof window === "undefined") {
@@ -29,7 +26,21 @@ export default function DashboardPage(): React.JSX.Element {
         }
 
         const savedProof = window.localStorage.getItem("user_proof");
-        setHasGeneratedProof(Boolean(savedProof));
+        const timestamp = window.localStorage.getItem("registration_timestamp");
+        const savedNullifier = window.localStorage.getItem("user_nullifier");
+
+        setHasStoredProof(Boolean(savedProof));
+        setStoredNullifier(savedNullifier ?? "-");
+
+        setTotalVoters(savedNullifier ? 1 : 0);
+
+        if (timestamp) {
+            const parsedDate = new Date(Number(timestamp));
+            if (!Number.isNaN(parsedDate.getTime())) {
+                setRegistrationDate(parsedDate.toLocaleDateString());
+            }
+        }
+
         setProofChecked(true);
     }, []);
 
@@ -43,176 +54,180 @@ export default function DashboardPage(): React.JSX.Element {
             return;
         }
 
-        if (!hasGeneratedProof) {
+        if (!hasStoredProof) {
             router.replace("/register");
         }
-    }, [loading, proofChecked, isConnected, hasGeneratedProof, router]);
+    }, [loading, proofChecked, isConnected, hasStoredProof, router]);
 
-    const defaultProjects = [
-        {
-            id: 1,
-            owner: "0x0000000000000000000000000000000000000001",
-            title: "Community Education Grants",
-            description: "Fund open educational resources and local training cohorts.",
-            category: "Education",
-            requestedFunding: 50e18,
-            receivedFunding: 0,
-            totalVotes: 0,
-            createdAt: Date.now(),
-            status: 0,
-            metadataURI: ""
-        },
-        {
-            id: 2,
-            owner: "0x0000000000000000000000000000000000000002",
-            title: "Open Source Security Audits",
-            description: "Support independent audits for critical public-good repositories.",
-            category: "Security",
-            requestedFunding: 75e18,
-            receivedFunding: 0,
-            totalVotes: 0,
-            createdAt: Date.now(),
-            status: 0,
-            metadataURI: ""
+    const verificationLabel = useMemo(() => {
+        if (!isConnected) {
+            return "Wallet disconnected";
         }
-    ];
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+        return isVerified ? "Anon Aadhaar verified" : "Verification pending";
+    }, [isConnected, isVerified]);
 
-        if (!projectName.trim() || !requestedEth.trim()) {
+    const truncatedNullifier = useMemo(() => {
+        if (storedNullifier === "-") {
+            return "-";
+        }
+
+        if (storedNullifier.length <= 24) {
+            return storedNullifier;
+        }
+
+        return `${storedNullifier.slice(0, 18)}...${storedNullifier.slice(-18)}`;
+    }, [storedNullifier]);
+
+    const chainLabel = chainId === 11155111 ? "Sepolia" : `Chain ${chainId}`;
+    const hasVerifierContract = VOTER_REGISTRY_ADDRESS !== "0x0000000000000000000000000000000000000000";
+
+    const handleWalletButton = () => {
+        if (isConnected) {
+            disconnect();
             return;
         }
 
-        setSubmissions((current) => [
-            {
-                name: projectName.trim(),
-                category,
-                requestedEth: requestedEth.trim()
-            },
-            ...current
-        ]);
-
-        setProjectName("");
-        setRequestedEth("");
+        void connect();
     };
 
-    if (loading || !proofChecked || !isConnected || !hasGeneratedProof) {
+    if (loading || !proofChecked || !isConnected || !hasStoredProof) {
         return (
             <main className={styles.page}>
-                <section className={styles.panel}>
-                    <h1>Checking Access</h1>
-                    <p className={styles.lead}>Dashboard access is granted only after proof generation.</p>
+                <section className={styles.checking}>
+                    <h1>Checking access</h1>
+                    <p className={styles.muted}>Dashboard access is granted only after proof generation.</p>
                 </section>
             </main>
         );
     }
 
     return (
-        <main className={styles.page}>
-            <section className={styles.panelWide}>
-                <div className={styles.topRow}>
-                    <div>
-                        <p className={styles.eyebrow}>Control Center</p>
-                        <h1>Project Submission Dashboard</h1>
+        <ProtectedRoute>
+            <main className={styles.page}>
+                <nav className={styles.nav}>
+                    <div className={styles.navInner}>
+                        <Link href="/" className={styles.brand}>
+                            <span className={styles.brandMark}>A</span>
+                            <span>AnonFund</span>
+                        </Link>
+                        <div className={styles.navActions}>
+                            <Link href="/" className={styles.navBtn}>
+                                Home
+                            </Link>
+                            <span className={styles.chip}>{chainLabel}</span>
+                            <span className={styles.chip}>{shortAddress}</span>
+                            <button type="button" className={styles.navBtn} onClick={handleWalletButton}>
+                                {isConnected ? "Disconnect" : "Connect wallet"}
+                            </button>
+                            <ModeToggle className={styles.navBtn} />
+                        </div>
                     </div>
-                    <div className={styles.walletPill}>{loading ? "Loading..." : shortAddress}</div>
-                </div>
+                </nav>
 
-                {!isConnected && (
-                    <div className={styles.notice}>
-                        Wallet not connected. <Link href="/connect">Connect now</Link>.
+                <section className={`${styles.shell} ${styles.main}`}>
+                    <div className={styles.heroRow}>
+                        <div>
+                            <h1 className={styles.title}>Dashboard</h1>
+                            <p className={styles.subtitle}>Welcome to anonfund platform</p>
+                        </div>
+                        <span className={styles.statusPill}>
+                            {isVerified ? "Verified voter" : "Verification pending"}
+                        </span>
                     </div>
-                )}
 
-                {isConnected && !isVerified && (
-                    <div className={styles.notice}>
-                        Verification pending. <Link href="/register">Complete registration</Link> to continue.
-                    </div>
-                )}
+                    <section className={styles.grid3}>
+                        <article className={styles.card}>
+                            <p className={styles.cardLabel}>Registration status</p>
+                            <p className={styles.cardValue}>{isVerified ? "Active" : "Pending"}</p>
+                            <p className={styles.cardHint}>Registered on {registrationDate}</p>
+                        </article>
+                        <article className={styles.card}>
+                            <p className={styles.cardLabel}>Voice credits</p>
+                            <p className={styles.cardValue}>{voiceCredits || 100}</p>
+                            <p className={styles.cardHint}>Available for voting</p>
+                        </article>
+                        <article className={styles.card}>
+                            <p className={styles.cardLabel}>Total voters</p>
+                            <p className={styles.cardValue}>{totalVoters}</p>
+                            <p className={styles.cardHint}>Registered voters</p>
+                        </article>
+                    </section>
 
-                <div className={styles.kpiGrid}>
-                    <article className={styles.kpiCard}>
-                        <span>Verification Status</span>
-                        <strong>{isVerified ? "Eligible" : "Locked"}</strong>
-                    </article>
-                    <article className={styles.kpiCard}>
-                        <span>Voice Credits</span>
-                        <strong>{voiceCredits}</strong>
-                    </article>
-                    <article className={styles.kpiCard}>
-                        <span>Nullifier Seed</span>
-                        <strong>{nullifierSeed ?? "-"}</strong>
-                    </article>
-                    <article className={styles.kpiCard}>
-                        <span>Nullifier Key</span>
-                        <strong>{nullifierKey ? `${nullifierKey.slice(0, 10)}...` : "-"}</strong>
-                    </article>
-                </div>
+                    <section className={styles.grid2}>
+                        <article className={styles.panel}>
+                            <h2 className={styles.sectionTitle}>Submit your project</h2>
+                            <p className={styles.sectionLead}>Request funding for your public goods project.</p>
+                            <p className={styles.bodyText}>
+                                Have a project idea that benefits the ecosystem? Submit your proposal and get funded
+                                through quadratic funding.
+                            </p>
+                            <Link href="/dashboard/submit-project" className={`${styles.buttonPrimary} ${styles.buttonFull}`}>
+                                Submit project proposal
+                            </Link>
+                        </article>
 
-                <div className={styles.tableWrap}>
-                    <h2>Submit Project</h2>
-                    <form onSubmit={handleSubmit} className={styles.projectForm}>
-                        <label>
-                            Project Name
-                            <input
-                                value={projectName}
-                                onChange={(event) => setProjectName(event.target.value)}
-                                placeholder="Open Source Grants"
-                                disabled={!isVerified}
-                            />
-                        </label>
-                        <label>
-                            Category
-                            <select value={category} onChange={(event) => setCategory(event.target.value)} disabled={!isVerified}>
-                                <option>Public Goods</option>
-                                <option>Education</option>
-                                <option>Infrastructure</option>
-                                <option>Security</option>
-                            </select>
-                        </label>
-                        <label>
-                            Requested (ETH)
-                            <input
-                                value={requestedEth}
-                                onChange={(event) => setRequestedEth(event.target.value)}
-                                placeholder="100"
-                                disabled={!isVerified}
-                            />
-                        </label>
-                        <button type="submit" disabled={!isVerified} className={styles.primary}>
-                            Submit Project
-                        </button>
-                    </form>
+                        <article className={styles.panel}>
+                            <h2 className={styles.sectionTitle}>Browse projects</h2>
+                            <p className={styles.sectionLead}>Discover and support public goods projects.</p>
+                            <p className={styles.bodyText}>
+                                Explore active projects seeking funding and contribute to the ones that matter to you.
+                            </p>
+                            <Link href="/dashboard/projects" className={`${styles.buttonSecondary} ${styles.buttonFull}`}>
+                                View all projects
+                            </Link>
+                        </article>
+                    </section>
 
-                    <h2>Submitted Projects</h2>
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th>Project</th>
-                                <th>Category</th>
-                                <th>Requested</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {submissions.length === 0 && (
-                                <tr>
-                                    <td colSpan={3}>No projects submitted yet.</td>
-                                </tr>
-                            )}
-                            {submissions.map((project) => (
-                                <tr key={`${project.name}-${project.requestedEth}`}>
-                                    <td>{project.name}</td>
-                                    <td>{project.category}</td>
-                                    <td>{project.requestedEth} ETH</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <section className={styles.panel}>
+                        <h2 className={styles.sectionTitle}>Your voter identity</h2>
+                        <p className={styles.sectionLead}>Your verified identity secured with zero-knowledge proofs.</p>
 
-                    {isVerified && <VotingInterface projects={defaultProjects} />}
-                </div>
-            </section>
-        </main>
+                        <div className={styles.infoGrid}>
+                            <article className={styles.card}>
+                                <p className={styles.sectionTitle}>Wallet address</p>
+                                <p className={styles.bodyText}>{shortAddress}</p>
+                            </article>
+                            <article className={styles.card}>
+                                <p className={styles.sectionTitle}>Verification status</p>
+                                <p className={styles.bodyText}>{verificationLabel}</p>
+                            </article>
+                        </div>
+
+                        <article className={styles.card}>
+                            <p className={styles.sectionTitle}>Nullifier (anonymous ID)</p>
+                            <p className={styles.bodyText}>{truncatedNullifier}</p>
+                        </article>
+
+                        <article className={styles.card}>
+                            <p className={styles.sectionTitle}>Privacy guarantees</p>
+                            <ul className={styles.list}>
+                                <li>1. Your votes are completely anonymous</li>
+                                <li>2. No one can link your wallet to your real identity</li>
+                                <li>3. Sybil-resistant through Anon Aadhaar</li>
+                                <li>4. One person = one vote set</li>
+                            </ul>
+                        </article>
+
+                        {hasVerifierContract && (
+                            <article className={styles.card}>
+                                <p className={styles.sectionTitle}>On-chain verification</p>
+                                <p className={styles.bodyText}>Contract: {VOTER_REGISTRY_ADDRESS}</p>
+                            </article>
+                        )}
+                    </section>
+
+                    <section className={styles.panel}>
+                        <h2 className={styles.sectionTitle}>Funding rounds</h2>
+                        <p className={styles.sectionLead}>Participate in quadratic funding rounds.</p>
+                        <div className={styles.emptyState}>
+                            <p className={styles.muted}>0</p>
+                            <h3>No active rounds</h3>
+                            <p>There are currently no active funding rounds. Check back later.</p>
+                        </div>
+                    </section>
+                </section>
+            </main>
+        </ProtectedRoute>
     );
 }
