@@ -1,8 +1,16 @@
-<svg width="800" height="800" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="400" rx="88" fill="#0A1F1A"/>
-  <circle cx="200" cy="200" r="132" fill="#11382E"/>
-  <path d="M200 84L292 126V206C292 268 248 324 200 344C152 324 108 268 108 206V126L200 84Z" fill="#22C55E"/>
-  <path d="M200 126L248 148V206C248 240 226 272 200 288C174 272 152 240 152 206V148L200 126Z" fill="#E8FFF3"/>
-  <path d="M170 247L200 165L230 247H215L208 226H192L185 247H170ZM196 213H204L200 201L196 213Z" fill="#14532D"/>
-  <text x="200" y="74" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#86EFAC">AF</text>
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="16" y="16" width="224" height="224" rx="56" fill="url(#bg)"/>
+  <rect x="28" y="28" width="200" height="200" rx="46" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>
+  <path d="M128 58L185 84V136C185 174 160 207 128 222C96 207 71 174 71 136V84L128 58Z" fill="url(#shield)"/>
+  <path d="M111 154L128 107L145 154H136L132 143H124L120 154H111Z" fill="#F4F7FF"/>
+  <defs>
+    <linearGradient id="bg" x1="32" y1="20" x2="224" y2="240" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#252F5A"/>
+      <stop offset="1" stop-color="#11193D"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="88" y1="76" x2="170" y2="214" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8892FF"/>
+      <stop offset="1" stop-color="#5B5BD6"/>
+    </linearGradient>
+  </defs>
 </svg>

@@ -1,34 +1,23 @@
 .page {
-    --bg: #05070f;
-    --bg-elev: #0f1320;
-    --line: #222b3f;
-    --text: #eef3ff;
-    --text-dim: #a7b2c8;
-    --accent: #2d6cff;
-    --accent-soft: #1b3f9e;
+    --bg: var(--background);
+    --bg-elev: var(--card);
+    --line: var(--border);
+    --text: var(--foreground);
+    --text-dim: var(--muted-foreground);
+    --accent: var(--primary);
+    --accent-soft: var(--primary);
 
     min-height: 100vh;
     padding: 1.4rem clamp(1rem, 2vw, 2rem) 2.5rem;
     color: var(--text);
-    background:
-        radial-gradient(90rem 40rem at 20% -10%, rgba(45, 108, 255, 0.16), transparent 55%),
-        radial-gradient(60rem 35rem at 80% 0%, rgba(107, 140, 255, 0.08), transparent 60%),
-        linear-gradient(180deg, #070b15 0%, var(--bg) 30%, #060914 100%);
+    background: var(--bg);
     font-family: var(--font-body), "Segoe UI", sans-serif;
     position: relative;
     overflow: clip;
 }
 
 .backgroundGlow {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(circle at 50% 12%, black 35%, transparent 90%);
-    z-index: 0;
+    display: none;
 }
 
 .header,
@@ -47,7 +36,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    border-bottom: 1px solid var(--line);
     padding: 0.4rem 0 0.95rem;
     animation: riseIn 560ms ease-out both;
 }
@@ -61,16 +50,9 @@
     font-weight: 700;
 }
 
-.brandMark {
-    display: grid;
-    place-items: center;
-    width: 1.85rem;
-    height: 1.85rem;
-    border-radius: 0.5rem;
-    background: linear-gradient(145deg, #0d1731, #102658);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #7fb6ff;
-    font-size: 0.95rem;
+.brandLogo {
+    width: 2rem;
+    height: 2rem;
 }
 
 .nav {
@@ -90,12 +72,16 @@
 }
 
 .launchLink {
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--line);
     border-radius: 0.75rem;
     padding: 0.56rem 0.9rem;
     font-weight: 700;
     color: var(--text);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--bg-elev);
+}
+
+.themeToggle {
+    display: inline-flex;
 }
 
 .hero {
@@ -107,11 +93,11 @@
 .kicker {
     display: inline-block;
     margin: 0;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid var(--line);
     border-radius: 999px;
     padding: 0.4rem 0.8rem;
-    color: #c7d5ef;
-    background: rgba(20, 31, 54, 0.7);
+    color: var(--text-dim);
+    background: var(--bg-elev);
     font-size: 0.85rem;
     font-weight: 700;
 }
@@ -153,15 +139,15 @@
 }
 
 .primaryBtn {
-    background: linear-gradient(160deg, #2d6cff 0%, #1b4de0 80%);
+    background: linear-gradient(160deg, var(--accent) 0%, var(--accent-soft) 80%);
     color: #ffffff;
-    box-shadow: 0 10px 40px rgba(45, 108, 255, 0.4);
+    box-shadow: 0 10px 34px rgba(91, 91, 214, 0.32);
 }
 
 .secondaryBtn {
-    border: 1px solid rgba(255, 255, 255, 0.21);
+    border: 1px solid var(--line);
     color: var(--text);
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--bg-elev);
 }
 
 .primaryBtn:hover,
@@ -211,8 +197,8 @@
 .cta {
     border: 1px solid var(--line);
     border-radius: 1.05rem;
-    background: linear-gradient(160deg, rgba(20, 27, 42, 0.95), rgba(16, 20, 31, 0.95));
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.06);
+    background: var(--bg-elev);
+    box-shadow: none;
 }
 
 .card,
@@ -246,7 +232,7 @@
     width: 2.15rem;
     height: 2.15rem;
     border-radius: 999px;
-    background: var(--accent);
+    background: linear-gradient(160deg, var(--accent), var(--accent-soft));
     color: #ffffff;
     font-weight: 800;
 }
@@ -285,8 +271,8 @@
     padding: 0.35rem 0.72rem;
     font-size: 0.86rem;
     font-weight: 800;
-    color: #d7e5ff;
-    background: linear-gradient(170deg, #2459df, #193b94);
+    color: var(--primary-foreground);
+    background: var(--accent);
 }
 
 .cta {
@@ -313,7 +299,7 @@
 .footer {
     margin-top: 2.6rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    border-top: 1px solid var(--line);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -378,6 +364,7 @@
 @media (max-width: 760px) {
     .header {
         flex-wrap: wrap;
+        justify-content: center;
     }
 
     .nav {
@@ -386,6 +373,10 @@
         justify-content: flex-start;
         overflow-x: auto;
         padding-bottom: 0.2rem;
+    }
+
+    .themeToggle {
+        order: 4;
     }
 
     .gridThree,
