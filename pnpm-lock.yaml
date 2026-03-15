@@ -11,6 +11,9 @@ importers:
       circomlib:
         specifier: ^2.0.5
         version: 2.0.5
+      next:
+        specifier: 15.5.12
+        version: 15.5.12(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       prettier:
         specifier: ^3.4.2
         version: 3.8.1
