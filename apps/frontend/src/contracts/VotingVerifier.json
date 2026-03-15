@@ -1,4 +1,36 @@
 {
-    "address": "0x0000000000000000000000000000000000000000",
-    "abi": []
+  "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+  "abi": [
+    {
+      "type": "function",
+      "name": "verifyProof",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256[2]",
+          "name": "_pA"
+        },
+        {
+          "type": "uint256[2][2]",
+          "name": "_pB"
+        },
+        {
+          "type": "uint256[2]",
+          "name": "_pC"
+        },
+        {
+          "type": "uint256[7]",
+          "name": "_pubSignals"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool",
+          "name": ""
+        }
+      ]
+    }
+  ]
 }

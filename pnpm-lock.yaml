@@ -19,6 +19,10 @@ importers:
         version: 5.9.3
 
   apps/blockchain:
+    dependencies:
+      '@anon-aadhaar/contracts':
+        specifier: 2.4.3
+        version: 2.4.3
     devDependencies:
       '@nomicfoundation/hardhat-chai-matchers':
         specifier: ^2.0.8
@@ -83,6 +87,9 @@ importers:
 
   apps/frontend:
     dependencies:
+      '@anon-aadhaar/core':
+        specifier: 2.4.3
+        version: 2.4.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@anon-aadhaar/react':
         specifier: ^2.4.3
         version: 2.4.3(bufferutil@4.1.0)(react@19.2.4)(utf-8-validate@6.0.6)
@@ -122,6 +129,9 @@ importers:
       porto:
         specifier: ^0.2.37
         version: 0.2.37(@tanstack/react-query@5.90.21(react@19.2.4))(@types/react@19.2.14)(@wagmi/core@3.4.0(@tanstack/query-core@5.90.20)(@types/react@19.2.14)(immer@10.0.2)(ox@0.14.0(typescript@5.9.3)(zod@4.3.6))(react@19.2.4)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.4))(viem@2.47.2(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@4.3.6)))(immer@10.0.2)(react-native@0.84.1(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.1.0)(react@19.2.4)(utf-8-validate@6.0.6))(react@19.2.4)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.4))(viem@2.47.2(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@4.3.6))(wagmi@3.5.0)
+      poseidon-lite:
+        specifier: ^0.3.0
+        version: 0.3.0
       react:
         specifier: ^19.0.0
         version: 19.2.4
@@ -204,6 +214,9 @@ packages:
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
+
+  '@anon-aadhaar/contracts@2.4.3':
+    resolution: {integrity: sha512-j5xyPEwsDfGVwj3hTawYtKu367IeKQCGkz/WUGsmcj1fAJSwi/klSiNjLObBGZR7uzv7FWjjQDhIP6C5xpS1ZA==}
 
   '@anon-aadhaar/core@2.4.3':
     resolution: {integrity: sha512-KSbgUx6DjqKuAz+LUgIvddoAdKrYw+KFE8kcdHWtVGdYza0W2M0Ip9v9TnO1D9g/I7XK+trebmK/fNjMLtXBNA==}
@@ -6439,6 +6452,8 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
+  '@anon-aadhaar/contracts@2.4.3': {}
+
   '@anon-aadhaar/core@2.4.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
       '@pcd/pcd-types': 0.10.0
@@ -6453,7 +6468,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       snarkjs: 0.7.6
-      styled-components: 6.3.11(react-dom@18.3.1(react@19.2.4))(react@18.3.1)
+      styled-components: 6.3.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       uuid: 9.0.1
       valid-url: 1.0.9
       web-worker: 1.2.0
@@ -13637,7 +13652,7 @@ snapshots:
 
   strip-json-comments@5.0.3: {}
 
-  styled-components@6.3.11(react-dom@18.3.1(react@19.2.4))(react@18.3.1):
+  styled-components@6.3.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@emotion/is-prop-valid': 1.4.0
       '@emotion/unitless': 0.10.0
@@ -13650,7 +13665,7 @@ snapshots:
       stylis: 4.3.6
       tslib: 2.8.1
     optionalDependencies:
-      react-dom: 18.3.1(react@19.2.4)
+      react-dom: 18.3.1(react@18.3.1)
 
   styled-components@6.3.11(react-dom@18.3.1(react@19.2.4))(react@19.2.4):
     dependencies:

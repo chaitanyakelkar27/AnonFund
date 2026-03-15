@@ -1,4 +1,474 @@
 {
-    "address": "0x0000000000000000000000000000000000000000",
-    "abi": []
+  "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+  "abi": [
+    {
+      "type": "constructor",
+      "stateMutability": "undefined",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_verifier"
+        },
+        {
+          "type": "address",
+          "name": "_voterRegistry"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "InsufficientCredits",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidProjectId",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidProof",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidRoundId",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidVoteCount",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NullifierAlreadyUsed",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "RoundNotActive",
+      "inputs": []
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "RoundEnded",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "roundId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "timestamp",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "RoundStarted",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "roundId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "timestamp",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "VoteSubmitted",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "roundId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "projectId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "voteCount",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "nullifierHash",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "timestamp",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "VOICE_CREDITS_PER_VOTER",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "calculateQuadraticCost",
+      "constant": true,
+      "stateMutability": "pure",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "votes"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "currentRoundId",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getProjectVotes",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "roundId"
+        },
+        {
+          "type": "uint256",
+          "name": "projectId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getRoundVotes",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "roundId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple[]",
+          "name": "",
+          "components": [
+            {
+              "type": "uint256",
+              "name": "projectId"
+            },
+            {
+              "type": "uint256",
+              "name": "voteCount"
+            },
+            {
+              "type": "uint256",
+              "name": "timestamp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getVoterCredits",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "nullifierHash"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "totalCredits"
+        },
+        {
+          "type": "uint256",
+          "name": "usedCredits"
+        },
+        {
+          "type": "uint256",
+          "name": "availableCredits"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isNullifierUsed",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "nullifierHash"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "projectTotalVotes",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "projectVotes",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        },
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "roundVotes",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        },
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "projectId"
+        },
+        {
+          "type": "uint256",
+          "name": "voteCount"
+        },
+        {
+          "type": "uint256",
+          "name": "timestamp"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "startNewRound",
+      "constant": false,
+      "payable": false,
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "submitVote",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256[2]",
+          "name": "pA"
+        },
+        {
+          "type": "uint256[2][2]",
+          "name": "pB"
+        },
+        {
+          "type": "uint256[2]",
+          "name": "pC"
+        },
+        {
+          "type": "uint256",
+          "name": "root"
+        },
+        {
+          "type": "uint256",
+          "name": "nullifierHash"
+        },
+        {
+          "type": "uint256",
+          "name": "signalHash"
+        },
+        {
+          "type": "uint256",
+          "name": "externalNullifier"
+        },
+        {
+          "type": "uint256",
+          "name": "roundId"
+        },
+        {
+          "type": "uint256",
+          "name": "projectId"
+        },
+        {
+          "type": "uint256",
+          "name": "voteCount"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "usedNullifiers",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "verifier",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "voterCredits",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "totalCredits"
+        },
+        {
+          "type": "uint256",
+          "name": "usedCredits"
+        },
+        {
+          "type": "uint256",
+          "name": "availableCredits"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "voterRegistry",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address",
+          "name": ""
+        }
+      ]
+    }
+  ]
 }

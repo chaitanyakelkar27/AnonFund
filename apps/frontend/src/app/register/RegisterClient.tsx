@@ -13,11 +13,30 @@ import {
 } from "@anon-aadhaar/react";
 import { useWallet } from "@/hooks/use-wallet";
 import { ModeToggle } from "@/components/mode-toggle";
+import { generateIdentity } from "@/circuits";
 import { VOTER_REGISTRY_ABI, VOTER_REGISTRY_ADDRESS } from "@/contracts";
 import styles from "../flow.module.css";
 
 const DEFAULT_NULLIFIER_SEED = 1234;
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+type Groth16ProofShape = {
+    pi_a: [string | number | bigint, string | number | bigint];
+    pi_b: [
+        [string | number | bigint, string | number | bigint],
+        [string | number | bigint, string | number | bigint]
+    ];
+    pi_c: [string | number | bigint, string | number | bigint];
+};
+
+type ProofClaim = {
+    ageAbove18?: string | number | bigint;
+    gender?: string | number | bigint;
+    pincode?: string | number | bigint;
+    state?: string | number | bigint;
+    timestamp?: string | number | bigint;
+    signal?: string | number | bigint;
+};
 
 function extractNullifierKey(proof: unknown): string | null {
     if (!proof || typeof proof !== "object") {
@@ -84,6 +103,57 @@ function extractNullifierFromProof(proof: unknown): bigint | null {
     return null;
 }
 
+function toBigInt(value: unknown, fallback: bigint = 0n): bigint {
+    if (typeof value === "bigint") {
+        return value;
+    }
+
+    if (typeof value === "number") {
+        return BigInt(value);
+    }
+
+    if (typeof value === "string" && value.length > 0) {
+        try {
+            return BigInt(value);
+        } catch {
+            return fallback;
+        }
+    }
+
+    return fallback;
+}
+
+function packGroth16Proof(proof: unknown): readonly [bigint, bigint, bigint, bigint, bigint, bigint, bigint, bigint] {
+    const record = (proof && typeof proof === "object") ? (proof as Record<string, unknown>) : {};
+    const maybeProof = (record.proof && typeof record.proof === "object")
+        ? (record.proof as Partial<Groth16ProofShape>)
+        : (record as Partial<Groth16ProofShape>);
+
+    const piA = maybeProof.pi_a ?? [0, 0];
+    const piB = maybeProof.pi_b ?? [[0, 0], [0, 0]];
+    const piC = maybeProof.pi_c ?? [0, 0];
+
+    return [
+        toBigInt(piA[0]),
+        toBigInt(piA[1]),
+        toBigInt(piB[0]?.[1]),
+        toBigInt(piB[0]?.[0]),
+        toBigInt(piB[1]?.[1]),
+        toBigInt(piB[1]?.[0]),
+        toBigInt(piC[0]),
+        toBigInt(piC[1]),
+    ] as const;
+}
+
+function unpackRevealArray(claim: ProofClaim | null): readonly [bigint, bigint, bigint, bigint] {
+    return [
+        toBigInt(claim?.ageAbove18),
+        toBigInt(claim?.gender),
+        toBigInt(claim?.pincode),
+        toBigInt(claim?.state),
+    ] as const;
+}
+
 function RegisterPageContent(): React.JSX.Element {
     const router = useRouter();
     const chainId = useChainId();
@@ -92,6 +162,7 @@ function RegisterPageContent(): React.JSX.Element {
     const chainLabel = chainId === 11155111 ? "Sepolia" : `Chain ${chainId}`;
     const [, latestProof] = useProver();
     const [isRegistering, setIsRegistering] = useState(false);
+    const [provisioningError, setProvisioningError] = useState<string | null>(null);
     const [storedNullifier, setStoredNullifier] = useState<string | null>(null);
     const [hasCheckedStorage, setHasCheckedStorage] = useState(false);
     const { data: hash, error, isPending, writeContract } = useWriteContract();
@@ -200,25 +271,57 @@ function RegisterPageContent(): React.JSX.Element {
 
         const loadVoterProof = async () => {
             try {
+                let identity = null as null | { secret: string; nullifier: string };
+                const storedIdentity = window.localStorage.getItem("voterIdentity");
+
+                if (storedIdentity) {
+                    const parsed = JSON.parse(storedIdentity) as { secret?: string; nullifier?: string };
+                    if (parsed.secret && parsed.nullifier) {
+                        identity = {
+                            secret: parsed.secret,
+                            nullifier: parsed.nullifier,
+                        };
+                    }
+                }
+
+                if (!identity) {
+                    const generatedIdentity = generateIdentity();
+                    identity = {
+                        secret: generatedIdentity.secret.toString(),
+                        nullifier: generatedIdentity.nullifier.toString(),
+                    };
+                }
+
                 const response = await fetch("/api/voter/proof", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ nullifier: nullifier.toString() })
+                    body: JSON.stringify({
+                        anonNullifier: nullifier.toString(),
+                        identitySecret: identity.secret,
+                        identityNullifier: identity.nullifier,
+                    })
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    window.localStorage.setItem("voterIdentity", JSON.stringify(data.identity));
-                    window.localStorage.setItem("merkleProof", JSON.stringify(data.merkleProof));
-                    window.localStorage.setItem("merkleRoot", data.merkleRoot);
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(text || "Failed to provision voter Merkle proof");
                 }
+
+                const data = await response.json();
+                window.localStorage.setItem("voterIdentity", JSON.stringify(data.identity));
+                window.localStorage.setItem("merkleProof", JSON.stringify(data.merkleProof));
+                window.localStorage.setItem("merkleRoot", data.merkleRoot);
+
+                setProvisioningError(null);
+                router.push("/dashboard");
             } catch (fetchError) {
                 console.error("Error fetching voter proof data", fetchError);
+                const message = fetchError instanceof Error ? fetchError.message : "Unable to provision voter proof data";
+                setProvisioningError(message);
             } finally {
                 setIsRegistering(false);
-                router.push("/dashboard");
             }
         };
 
@@ -235,17 +338,35 @@ function RegisterPageContent(): React.JSX.Element {
     }, [error]);
 
     const handleRegisterVoter = () => {
-        if (!canUseRegistry || !nullifier || anonAadhaar.status !== "logged-in") {
+        if (!canUseRegistry || !nullifier || !latestProof || anonAadhaar.status !== "logged-in") {
             return;
         }
 
         setIsRegistering(true);
+        setProvisioningError(null);
+        
+        const proofRecord = latestProof as Record<string, unknown>;
+        const claim = (proofRecord.claim && typeof proofRecord.claim === "object")
+            ? (proofRecord.claim as ProofClaim)
+            : null;
+        const nullifierSeed = BigInt(extractNullifierKey(latestProof) ?? DEFAULT_NULLIFIER_SEED);
+        const timestamp = toBigInt(claim?.timestamp, BigInt(Math.floor(Date.now() / 1000)));
+        const signal = toBigInt(claim?.signal, 1n);
+        const revealArray = unpackRevealArray(claim);
+        const groth16Proof = packGroth16Proof(latestProof);
 
         writeContract({
             address: VOTER_REGISTRY_ADDRESS,
             abi: VOTER_REGISTRY_ABI,
             functionName: "registerVoter",
-            args: [nullifier]
+            args: [
+                nullifierSeed,
+                nullifier,
+                timestamp,
+                signal,
+                revealArray,
+                groth16Proof
+            ]
         });
     };
 
@@ -368,6 +489,7 @@ function RegisterPageContent(): React.JSX.Element {
 
                 {hash && <p className={styles.subtleText}>Transaction: {hash.slice(0, 10)}...{hash.slice(-8)}</p>}
                 {error && <p className={styles.errorText}>Registration failed: {error.message}</p>}
+                {provisioningError && <p className={styles.errorText}>Proof provisioning failed: {provisioningError}</p>}
                 {!canUseRegistry && (
                     <p className={styles.errorText}>
                         Configure a valid VoterRegistry contract address and ABI to complete on-chain registration.

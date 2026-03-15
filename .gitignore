@@ -20,6 +20,13 @@ apps/blockchain/artifacts/
 apps/blockchain/cache/
 apps/blockchain/typechain-types/
 
+# Local audit and test work artifacts
+apps/blockchain/audit_report*.md
+apps/blockchain/test/
+
+# Local frontend voter registry state
+apps/frontend/.data/
+
 # TypeScript incremental files
 *.tsbuildinfo
 

@@ -1,4 +1,5 @@
 import { groth16 } from "snarkjs";
+import { poseidon1, poseidon3 } from "poseidon-lite";
 
 export interface VotingInput {
     roundId: bigint;
@@ -21,12 +22,12 @@ export interface VotingProof {
     };
     publicSignals: {
         root: string;
+        nullifierHash: string;
+        signalHash: string;
+        externalNullifier: string;
         roundId: string;
         projectId: string;
         voteCount: string;
-        signalHash: string;
-        nullifierHash: string;
-        externalNullifier: string;
     };
 }
 
@@ -63,10 +64,10 @@ export class ProofGenerator {
                 root: publicSignals[0],
                 nullifierHash: publicSignals[1],
                 signalHash: publicSignals[2],
-                roundId: publicSignals[3],
-                projectId: publicSignals[4],
-                voteCount: publicSignals[5],
-                externalNullifier: publicSignals[6],
+                externalNullifier: publicSignals[3],
+                roundId: publicSignals[4],
+                projectId: publicSignals[5],
+                voteCount: publicSignals[6],
             },
         };
     }
@@ -79,23 +80,23 @@ export interface Identity {
 }
 
 export function generateIdentityCommitment(_secret: bigint): bigint {
-    return BigInt(0);
+    return poseidon1([_secret]);
 }
 
 export function generateNullifierHash(
-    _identityNullifier: bigint,
-    _externalNullifier: bigint,
-    _roundId: bigint
+    identityNullifier: bigint,
+    externalNullifier: bigint,
+    roundId: bigint
 ): bigint {
-    return BigInt(0);
+    return poseidon3([identityNullifier, externalNullifier, roundId]);
 }
 
 export function generateSignalHash(
-    _roundId: bigint,
-    _projectId: bigint,
-    _voteCount: bigint
+    roundId: bigint,
+    projectId: bigint,
+    voteCount: bigint
 ): bigint {
-    return BigInt(0);
+    return poseidon3([roundId, projectId, voteCount]);
 }
 
 export function generateIdentity(): Identity {

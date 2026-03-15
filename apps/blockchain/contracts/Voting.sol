@@ -31,7 +31,8 @@ contract Voting {
     mapping(uint256 => bool) public usedNullifiers;
     mapping(uint256 => mapping(uint256 => uint256)) public projectVotes;
     mapping(uint256 => uint256) public projectTotalVotes;
-    mapping(address => mapping(uint256 => VoterCredits)) public voterCreditsPerRound;
+    // Map nullifierHash to VoterCredits (since nullifierHash uniquely identifies an identity for a round when externalNullifier=1)
+    mapping(uint256 => VoterCredits) public voterCredits;
     mapping(uint256 => VoteRecord[]) public roundVotes;
 
     event VoteSubmitted(
@@ -74,17 +75,23 @@ contract Voting {
         if (roundId != currentRoundId) revert InvalidRoundId();
         if (projectId == 0) revert InvalidProjectId();
         if (voteCount == 0) revert InvalidVoteCount();
-        if (usedNullifiers[nullifierHash]) revert NullifierAlreadyUsed();
+        
+        // Enforce a constant externalNullifier so nullifierHash is strictly round-scoped.
+        // This prevents Sybil attacks where users generate new nullifiers per-project using the same identity.
+        if (externalNullifier != 1) revert InvalidProof();
+        
+        // Note: we DO NOT revert if usedNullifiers[nullifierHash] is true here, because
+        // they are allowed to submit multiple proofs (for different projects) until their credits run out!
 
-        // Public signals must match circuit output order: [root, nullifierHash, signalHash, roundId, projectId, voteCount, externalNullifier]
+        // Public signals must match circuit output order exactly
         uint256[7] memory pubSignals = [
             root,
             nullifierHash,
             signalHash,
+            externalNullifier,
             roundId,
             projectId,
-            voteCount,
-            externalNullifier
+            voteCount
         ];
 
         bool isValid = verifier.verifyProof(pA, pB, pC, pubSignals);
@@ -92,7 +99,7 @@ contract Voting {
 
         uint256 creditsRequired = voteCount * voteCount;
         
-        VoterCredits storage credits = voterCreditsPerRound[msg.sender][roundId];
+        VoterCredits storage credits = voterCredits[nullifierHash];
         if (credits.totalCredits == 0) {
             credits.totalCredits = VOICE_CREDITS_PER_VOTER;
             credits.availableCredits = VOICE_CREDITS_PER_VOTER;
@@ -120,12 +127,12 @@ contract Voting {
         return projectVotes[roundId][projectId];
     }
 
-    function getVoterCredits(address voter, uint256 roundId) external view returns (
+    function getVoterCredits(uint256 nullifierHash) external view returns (
         uint256 totalCredits,
         uint256 usedCredits,
         uint256 availableCredits
     ) {
-        VoterCredits memory credits = voterCreditsPerRound[voter][roundId];
+        VoterCredits memory credits = voterCredits[nullifierHash];
         return (credits.totalCredits, credits.usedCredits, credits.availableCredits);
     }
 

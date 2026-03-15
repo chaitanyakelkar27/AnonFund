@@ -47,8 +47,8 @@ type LocalStoredProject = {
 };
 
 type ProjectMetadata = {
-    title: string;
-    description: string;
+    title?: string;
+    description?: string;
     category?: string;
     milestones?: unknown[];
     imageUrl?: string;
@@ -207,13 +207,13 @@ export default function ProjectsPage(): React.JSX.Element {
                         id,
                         title: title,
                         description: description,
-                        category: parsedMetadata.category || "other",
+                        category: parsedMetadata?.category || "other",
                         requestedFunding: requestedFundingRaw ? (Number(requestedFundingRaw) / 1e18).toFixed(2) : "0",
                         currentFunding: currentFundingRaw ? (Number(currentFundingRaw) / 1e18).toFixed(2) : "0",
                         status: parseStatus(statusRaw),
                         contributorsCount: 0,
-                        milestonesCount: Array.isArray(parsedMetadata.milestones) ? parsedMetadata.milestones.length : 0,
-                        imageUrl: parsedMetadata.imageUrl ? normalizeIpfsUrl(parsedMetadata.imageUrl) : undefined,
+                        milestonesCount: Array.isArray(parsedMetadata?.milestones) ? parsedMetadata.milestones.length : 0,
+                        imageUrl: parsedMetadata?.imageUrl ? normalizeIpfsUrl(parsedMetadata.imageUrl) : undefined,
                     };
                 })
             );

@@ -41,7 +41,8 @@ export function useVoting() {
 
         try {
             const roundId = 1n;
-            const externalNullifier = BigInt(allocation.projectId);
+            // Use a constant externalNullifier to ensure nullifiers are round-scoped (Sybil resistance)
+            const externalNullifier = 1n;
 
             const input: VotingInput = {
                 identitySecret: identity.secret,

@@ -1,9 +1,25 @@
 {
-  "address": "0xb5C4c1209825b2287C8F906Dc0B5361046461412",
+  "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
   "abi": [
+    {
+      "type": "constructor",
+      "stateMutability": "undefined",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_verifier"
+        }
+      ]
+    },
     {
       "type": "error",
       "name": "InvalidNullifier",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidProof",
       "inputs": []
     },
     {
@@ -43,6 +59,20 @@
       "outputs": [
         {
           "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "anonAadhaarVerifier",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address",
           "name": ""
         }
       ]
@@ -148,7 +178,27 @@
       "inputs": [
         {
           "type": "uint256",
+          "name": "nullifierSeed"
+        },
+        {
+          "type": "uint256",
           "name": "nullifier"
+        },
+        {
+          "type": "uint256",
+          "name": "timestamp"
+        },
+        {
+          "type": "uint256",
+          "name": "signal"
+        },
+        {
+          "type": "uint256[4]",
+          "name": "revealArray"
+        },
+        {
+          "type": "uint256[8]",
+          "name": "groth16Proof"
         }
       ],
       "outputs": []

@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { groth16 } from "snarkjs";
 import { webcrypto } from "crypto";
-import { poseidon2, poseidon3 } from "poseidon-lite";
+import { poseidon1, poseidon3 } from "poseidon-lite";
 
 export interface VotingInput {
   roundId: bigint;
@@ -95,7 +95,7 @@ export class ProofGenerator {
 }
 
 export function generateIdentityCommitment(secret: bigint): bigint {
-  return poseidon2([secret, BigInt(0)]);
+  return poseidon1([secret]);
 }
 
 export function generateNullifierHash(
