@@ -38,9 +38,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 0;
+    padding: 1.1rem 0;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
+    gap: 1rem;
 }
 
 .brand {
@@ -66,16 +67,19 @@
 .nav {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 .nav a {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--text-secondary);
     transition: color var(--transition);
 }
-.nav a:hover { color: var(--text); }
+
+.nav a:hover {
+    color: var(--text);
+}
 
 .launchLink {
     display: inline-flex;
@@ -89,7 +93,10 @@
     font-weight: 600;
     transition: background var(--transition);
 }
-.launchLink:hover { background: var(--accent-hover); }
+
+.launchLink:hover {
+    background: var(--accent-hover);
+}
 
 /* ─── Hero ─── */
 
@@ -161,14 +168,22 @@
     background: var(--accent);
     color: #fff;
 }
-.primaryBtn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+.primaryBtn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
 
 .secondaryBtn {
     background: transparent;
     color: var(--text);
     border: 1px solid var(--border);
 }
-.secondaryBtn:hover { background: var(--surface); transform: translateY(-1px); }
+
+.secondaryBtn:hover {
+    background: var(--surface);
+    transform: translateY(-1px);
+}
 
 /* ─── Sections ─── */
 
@@ -360,18 +375,44 @@
 /* ─── Responsive ─── */
 
 @media (min-width: 640px) {
-    .gridThree { grid-template-columns: repeat(2, 1fr); }
-    .gridFour  { grid-template-columns: repeat(2, 1fr); }
+    .gridThree {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gridFour {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (min-width: 960px) {
-    .gridThree { grid-template-columns: repeat(3, 1fr); }
-    .gridFour  { grid-template-columns: repeat(2, 1fr); }
+    .gridThree {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .gridFour {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 640px) {
-    .header { flex-wrap: wrap; gap: 0.75rem; }
-    .nav { width: 100%; order: 3; gap: 1rem; }
-    .hero { padding: 3rem 0 2.5rem; }
-    .footer { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+    .header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .nav {
+        width: 100%;
+        order: 3;
+        gap: 1rem;
+    }
+
+    .hero {
+        padding: 3rem 0 2.5rem;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
 }

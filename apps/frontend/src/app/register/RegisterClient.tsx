@@ -192,7 +192,7 @@ function RegisterPageContent(): React.JSX.Element {
 
         window.localStorage.setItem("user_nullifier", nullifier.toString());
         window.localStorage.setItem("user_proof", JSON.stringify(latestProof));
-        
+
         // Only set timestamp if they just registered, otherwise keep existing or don't set
         if (isConfirmed) {
             window.localStorage.setItem("registration_timestamp", Date.now().toString());
@@ -256,22 +256,24 @@ function RegisterPageContent(): React.JSX.Element {
     return (
         <main className={styles.page}>
             <nav className={styles.flowNav}>
-                <Link href="/" className={styles.brand}>
-                    <span className={styles.brandMark}>A</span>
-                    <span>AnonFund</span>
-                </Link>
-                <div className={styles.flowNavActions}>
-                    <Link href="/" className={styles.navLink}>← Home</Link>
-                    <span className={styles.navChip}>{chainLabel}</span>
-                    <span className={styles.navChip}>{shortAddress}</span>
-                    <ModeToggle className={styles.themeBtn} />
+                <div className={styles.flowNavInner}>
+                    <Link href="/" className={styles.brand}>
+                        <span className={styles.brandMark}>A</span>
+                        <span>AnonFund</span>
+                    </Link>
+                    <div className={styles.flowNavActions}>
+                        <Link href="/" className={styles.navLink}>← Home</Link>
+                        <span className={styles.navChip}>{chainLabel}</span>
+                        <span className={styles.navChip}>{shortAddress}</span>
+                        <ModeToggle className={styles.themeBtn} />
+                    </div>
                 </div>
             </nav>
 
             <section className={styles.centeredPanel}>
                 <div className={styles.shieldIcon} aria-hidden="true">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                     </svg>
                 </div>
                 <h1 className={styles.panelHeading}>Register as Voter</h1>
