@@ -74,34 +74,7 @@ function parseStatus(status: number): ProjectStatus {
     }
 }
 
-function readLocalProjects(): ProjectItem[] {
-    if (typeof window === "undefined") {
-        return [];
-    }
-
-    const raw = window.localStorage.getItem("anonfund.projects");
-    if (!raw) {
-        return [];
-    }
-
-    try {
-        const parsed = JSON.parse(raw) as LocalStoredProject[];
-        return parsed.map((project) => ({
-            id: project.id,
-            title: project.title,
-            description: project.description,
-            category: project.category,
-            requestedFunding: project.requestedFunding,
-            currentFunding: "0",
-            status: "Pending",
-            contributorsCount: 0,
-            milestonesCount: project.milestonesCount ?? 0,
-            imageUrl: normalizeIpfsUrl(project.imageUrl),
-        }));
-    } catch {
-        return [];
-    }
-}
+// Read local projects removed as requested
 
 function getStatusClass(status: ProjectStatus): string {
     switch (status) {
@@ -152,8 +125,6 @@ export default function ProjectsPage(): React.JSX.Element {
     } = useVoting();
 
     useEffect(() => {
-        const localProjects = readLocalProjects();
-        setProjects(localProjects);
 
         const storedIdentity = window.localStorage.getItem("voterIdentity");
         const storedProof = window.localStorage.getItem("merkleProof");
@@ -200,23 +171,40 @@ export default function ProjectsPage(): React.JSX.Element {
                     return null;
                 }
 
+                let parsedMetadata: any = null;
+                try {
+                    if (metadataUri.startsWith("{")) {
+                        parsedMetadata = JSON.parse(metadataUri);
+                    }
+                } catch {
+                    // Ignore parsing errors for old/invalid test data
+                }
+
+                const title = parsedMetadata?.title;
+                const description = parsedMetadata?.description;
+
+                // Filter out dummy/test projects that don't have proper parsed metadata
+                if (!title || !description) {
+                    return null;
+                }
+
                 return {
                     id,
-                    title: metadataUri ? `Project #${id}` : `Untitled project #${id}`,
-                    description: metadataUri || "On-chain project submitted via anonfund.",
-                    category: "other",
+                    title: title,
+                    description: description,
+                    category: parsedMetadata.category || "other",
                     requestedFunding: requestedFundingRaw ? (Number(requestedFundingRaw) / 1e18).toFixed(2) : "0",
                     currentFunding: currentFundingRaw ? (Number(currentFundingRaw) / 1e18).toFixed(2) : "0",
                     status: parseStatus(statusRaw),
                     contributorsCount: 0,
-                    milestonesCount: 0,
+                    milestonesCount: Array.isArray(parsedMetadata.milestones) ? parsedMetadata.milestones.length : 0,
+                    imageUrl: parsedMetadata.imageUrl ? normalizeIpfsUrl(parsedMetadata.imageUrl) : undefined,
                 };
             })
             .filter((project): project is ProjectItem => project !== null);
 
         if (chainProjects.length > 0) {
-            const localProjects = readLocalProjects();
-            setProjects([...localProjects, ...chainProjects]);
+            setProjects(chainProjects);
         }
     }, [allProjectsData]);
 

@@ -33,29 +33,10 @@ type ProjectMetadata = {
     imageUrl?: string;
 };
 
-type LocalStoredProject = {
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    requestedFunding: string;
-    imageUrl?: string;
-    milestonesCount: number;
-    createdAt: number;
-};
+// Removed LocalStoredProject and storeProjectLocally
 
 function isConfiguredContract(address: `0x${string}`, abi: unknown[]): boolean {
     return address !== "0x0000000000000000000000000000000000000000" && abi.length > 0;
-}
-
-function storeProjectLocally(project: LocalStoredProject): void {
-    if (typeof window === "undefined") {
-        return;
-    }
-
-    const raw = window.localStorage.getItem("anonfund.projects");
-    const current: LocalStoredProject[] = raw ? (JSON.parse(raw) as LocalStoredProject[]) : [];
-    window.localStorage.setItem("anonfund.projects", JSON.stringify([project, ...current]));
 }
 
 export default function SubmitProjectPage(): React.JSX.Element {
@@ -145,29 +126,21 @@ export default function SubmitProjectPage(): React.JSX.Element {
                 imageUrl: imagePreview || undefined,
             };
 
-            const localProject: LocalStoredProject = {
-                id: Date.now(),
-                title: metadata.title,
-                description: metadata.description,
-                category: metadata.category,
-                requestedFunding: metadata.requestedFunding,
-                imageUrl: metadata.imageUrl,
-                milestonesCount: metadata.milestones.length,
-                createdAt: Date.now(),
-            };
-
-            storeProjectLocally(localProject);
-
-            if (hasProjectContract) {
-                writeContract({
-                    address: PROJECT_ADDRESS,
-                    abi: PROJECT_ABI,
-                    functionName: "submitProject",
-                    args: [JSON.stringify(metadata), parseEther(requestedFunding || "0")],
-                });
-            } else {
-                setLocalSuccess(true);
+            // Ensure any old local mock data is cleared out
+            if (typeof window !== "undefined") {
+                window.localStorage.removeItem("anonfund.projects");
             }
+
+            if (!hasProjectContract) {
+                throw new Error("Smart contract is not configured.");
+            }
+
+            writeContract({
+                address: PROJECT_ADDRESS,
+                abi: PROJECT_ABI,
+                functionName: "submitProject",
+                args: [JSON.stringify(metadata), parseEther(requestedFunding || "0")],
+            });
         } catch (submitError) {
             const fallbackMessage = submitError instanceof Error ? submitError.message : "Failed to submit project";
             setLocalError(fallbackMessage);

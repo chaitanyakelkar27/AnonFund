@@ -184,13 +184,19 @@ function RegisterPageContent(): React.JSX.Element {
     }, [isAnonLoggedIn, isVerified, latestProof, nullifierSeed, setVerificationData]);
 
     useEffect(() => {
-        if (!isConfirmed || !nullifier || !latestProof) {
+        // If they just registered (isConfirmed) OR if they are already registered (isNullifierUsed)
+        // and we have their proof, save the credentials so the dashboard accepts them.
+        if ((!isConfirmed && isNullifierUsed !== true) || !nullifier || !latestProof) {
             return;
         }
 
         window.localStorage.setItem("user_nullifier", nullifier.toString());
         window.localStorage.setItem("user_proof", JSON.stringify(latestProof));
-        window.localStorage.setItem("registration_timestamp", Date.now().toString());
+        
+        // Only set timestamp if they just registered, otherwise keep existing or don't set
+        if (isConfirmed) {
+            window.localStorage.setItem("registration_timestamp", Date.now().toString());
+        }
 
         const loadVoterProof = async () => {
             try {
@@ -202,15 +208,12 @@ function RegisterPageContent(): React.JSX.Element {
                     body: JSON.stringify({ nullifier: nullifier.toString() })
                 });
 
-                if (!response.ok) {
-                    throw new Error("Failed to fetch voter proof data");
+                if (response.ok) {
+                    const data = await response.json();
+                    window.localStorage.setItem("voterIdentity", JSON.stringify(data.identity));
+                    window.localStorage.setItem("merkleProof", JSON.stringify(data.merkleProof));
+                    window.localStorage.setItem("merkleRoot", data.merkleRoot);
                 }
-
-                const data = await response.json();
-
-                window.localStorage.setItem("voterIdentity", JSON.stringify(data.identity));
-                window.localStorage.setItem("merkleProof", JSON.stringify(data.merkleProof));
-                window.localStorage.setItem("merkleRoot", data.merkleRoot);
             } catch (fetchError) {
                 console.error("Error fetching voter proof data", fetchError);
             } finally {
@@ -220,7 +223,7 @@ function RegisterPageContent(): React.JSX.Element {
         };
 
         void loadVoterProof();
-    }, [isConfirmed, nullifier, latestProof, router]);
+    }, [isConfirmed, isNullifierUsed, nullifier, latestProof, router]);
 
     useEffect(() => {
         if (!error) {
