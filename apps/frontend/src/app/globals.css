@@ -4,56 +4,64 @@
 
 :root {
     color-scheme: dark;
-    --app-bg: #090d18;
-    --app-text: #ecf1ff;
-    --app-muted: #b3bfd9;
-    --app-font-body: var(--font-base), "Segoe UI", sans-serif;
-    --app-font-heading: var(--font-base), "Segoe UI", sans-serif;
-    --font-body: var(--font-base), "Segoe UI", sans-serif;
-    --font-heading: var(--font-base), "Segoe UI", sans-serif;
 
-    --fs-label: 0.85rem;
-    --fs-body: 1rem;
-    --fs-subtitle: 1.15rem;
-    --fs-title: clamp(2.25rem, 5vw, 3.4rem);
-    --fs-section: clamp(1.65rem, 3vw, 2.4rem);
+    /* ─── Palette (Dark default) ─── */
+    --bg: #0a0a0a;
+    --bg-elevated: #111113;
+    --surface: rgba(255, 255, 255, 0.04);
+    --text: #fafafa;
+    --text-secondary: #94a3b8;
+    --border: rgba(255, 255, 255, 0.08);
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+
+    /* ─── Typography ─── */
+    --font: var(--font-base, "Inter"), system-ui, -apple-system, sans-serif;
+
+    /* ─── Radii / Spacing ─── */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+    --transition: 200ms ease;
 }
 
 html[data-theme="light"] {
     color-scheme: light;
-    --app-bg: #eef3ff;
-    --app-text: #111827;
-    --app-muted: #475569;
+    --bg: #ffffff;
+    --bg-elevated: #f8fafc;
+    --surface: rgba(0, 0, 0, 0.02);
+    --text: #0f172a;
+    --text-secondary: #64748b;
+    --border: #e2e8f0;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
 }
 
-* {
-    box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-html,
+html { scroll-behavior: smooth; }
+
 body {
     margin: 0;
-    min-height: 100%;
-    padding: 0;
-    background: var(--app-bg);
-    color: var(--app-text);
-    font-family: var(--app-font-body);
-    font-size: var(--fs-body);
-    line-height: 1.5;
-    transition: background-color 220ms ease, color 220ms ease;
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background var(--transition), color var(--transition);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: var(--app-font-heading);
-    letter-spacing: -0.01em;
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin: 0;
 }
 
-a {
-    color: inherit;
-    text-decoration: none;
-}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+
+::selection { background: rgba(59, 130, 246, 0.25); }

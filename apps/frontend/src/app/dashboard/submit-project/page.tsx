@@ -200,7 +200,8 @@ export default function SubmitProjectPage(): React.JSX.Element {
                 <nav className={styles.nav}>
                     <div className={styles.navInner}>
                         <Link href="/dashboard" className={styles.brand}>
-                            anonfund
+                            <span className={styles.brandMark}>A</span>
+                            <span>AnonFund</span>
                         </Link>
                         <div className={styles.navActions}>
                             <Link href="/dashboard" className={styles.navBtn}>

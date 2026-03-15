@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useChainId, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import {
     AnonAadhaarProof,
     AnonAadhaarProvider,
@@ -12,6 +12,7 @@ import {
     useProver
 } from "@anon-aadhaar/react";
 import { useWallet } from "@/hooks/use-wallet";
+import { ModeToggle } from "@/components/mode-toggle";
 import { VOTER_REGISTRY_ABI, VOTER_REGISTRY_ADDRESS } from "@/contracts";
 import styles from "../flow.module.css";
 
@@ -85,8 +86,10 @@ function extractNullifierFromProof(proof: unknown): bigint | null {
 
 function RegisterPageContent(): React.JSX.Element {
     const router = useRouter();
+    const chainId = useChainId();
     const { loading, isConnected, isVerified, setVerificationData, address, shortAddress } = useWallet();
     const [anonAadhaar] = useAnonAadhaar();
+    const chainLabel = chainId === 11155111 ? "Sepolia" : `Chain ${chainId}`;
     const [, latestProof] = useProver();
     const [isRegistering, setIsRegistering] = useState(false);
     const [storedNullifier, setStoredNullifier] = useState<string | null>(null);
@@ -249,14 +252,35 @@ function RegisterPageContent(): React.JSX.Element {
 
     return (
         <main className={styles.page}>
-            <section className={styles.panel}>
-                <h1>Register as Voter</h1>
-                <p className={styles.lead}>
-                    Complete your one-time registration to participate in quadratic funding.
+            <nav className={styles.flowNav}>
+                <Link href="/" className={styles.brand}>
+                    <span className={styles.brandMark}>A</span>
+                    <span>AnonFund</span>
+                </Link>
+                <div className={styles.flowNavActions}>
+                    <Link href="/" className={styles.navLink}>← Home</Link>
+                    <span className={styles.navChip}>{chainLabel}</span>
+                    <span className={styles.navChip}>{shortAddress}</span>
+                    <ModeToggle className={styles.themeBtn} />
+                </div>
+            </nav>
+
+            <section className={styles.centeredPanel}>
+                <div className={styles.shieldIcon} aria-hidden="true">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <h1 className={styles.panelHeading}>Register as Voter</h1>
+                <p className={styles.panelSub}>
+                    Complete your one-time registration to participate in quadratic funding
                 </p>
 
                 <div className={styles.stepCard}>
-                    <h2>Step 1: Wallet Connected</h2>
+                    <div className={styles.stepTitleRow}>
+                        <span className={styles.stepIcon} aria-hidden="true">✓</span>
+                        <h2>Step 1: Wallet Connected</h2>
+                    </div>
                     <p>{isConnected ? `Your wallet ${shortAddress} is connected` : "Connect your wallet to continue"}</p>
                 </div>
 
