@@ -20,10 +20,7 @@ async function main() {
     abi: JSON.parse(verifier.interface.formatJson()),
   };
 
-  const frontendPath = path.join(
-    __dirname,
-    "../../frontend/src/contracts/VotingVerifier.json",
-  );
+  const frontendPath = path.join(__dirname, "../../frontend/src/contracts/VotingVerifier.json");
 
   fs.mkdirSync(path.dirname(frontendPath), { recursive: true });
   fs.writeFileSync(frontendPath, JSON.stringify(contractData, null, 2));

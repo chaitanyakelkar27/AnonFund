@@ -1,103 +1,115 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { useWallet } from "@/hooks/use-wallet";
+import { useEffect, useState } from "react";
+import { useAccount, useReadContract } from "wagmi";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { Shield, ArrowLeft } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
-import styles from "../flow.module.css";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { VOTER_REGISTRY_ADDRESS, VOTER_REGISTRY_ABI } from "@/contracts";
 
-export default function ConnectPage(): React.JSX.Element {
-    const { loading, isConnected, shortAddress, connect, disconnect, isVerified, openConnectModal } = useWallet();
-    const attemptedAutoOpen = useRef(false);
+export default function ConnectPage() {
+  const router = useRouter();
+  const { address, isConnected } = useAccount();
+  const [storedNullifier, setStoredNullifier] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (attemptedAutoOpen.current || loading || isConnected) {
-            return;
-        }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("user_nullifier");
+      setStoredNullifier(saved);
+    }
+  }, []);
 
-        attemptedAutoOpen.current = true;
+  const { data: isRegistered, isLoading } = useReadContract({
+    address: VOTER_REGISTRY_ADDRESS,
+    abi: VOTER_REGISTRY_ABI,
+    functionName: "isNullifierUsed",
+    args: storedNullifier ? [BigInt(storedNullifier)] : undefined,
+  });
 
-        void openConnectModal().catch(() => {
-            // Keep UI usable even if auto-open fails; user can click Connect Wallet manually.
-        });
-    }, [loading, isConnected, openConnectModal]);
+  useEffect(() => {
+    if (isConnected && address && !isLoading) {
+      if (storedNullifier && isRegistered) {
+        // Returning voter - go to dashboard
+        router.push("/dashboard");
+      } else {
+        // New voter - go to registration
+        router.push("/register");
+      }
+    }
+  }, [isConnected, address, isRegistered, isLoading, storedNullifier, router]);
 
-    return (
-        <main className={styles.page}>
-            <nav className={styles.flowNav}>
-                <div className={styles.flowNavInner}>
-                    <Link href="/" className={styles.brand}>
-                        <span className={styles.brandMark}>A</span>
-                        <span>AnonFund</span>
-                    </Link>
-                    <div className={styles.flowNavActions}>
-                        <Link href="/" className={styles.navLink}>← Home</Link>
-                        <ModeToggle className={styles.themeBtn} />
-                    </div>
-                </div>
-            </nav>
+  return (
+    <div className="min-h-screen max-w-7xl mx-auto bg-background">
+      <nav className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div className="container flex h-16 items-center justify-between">
+          <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Image src="/logo.svg" alt="AnonFund Logo" width={32} height={32} className="h-8 w-8" />
+            <span className="text-xl font-bold">AnonFund</span>
+          </Link>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/" className="hidden sm:inline-flex">
+              <Button variant="ghost" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Home
+              </Button>
+            </Link>
+            <ModeToggle />
+          </div>
+        </div>
+      </nav>
 
-            <section className={styles.centeredPanel}>
-                <div className={styles.shieldIcon} aria-hidden="true">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    </svg>
-                </div>
-                <h1 className={styles.panelHeading}>Connect Your Wallet</h1>
-                <p className={styles.panelSub}>Connect your wallet to access the AnonFund platform</p>
+      <main className="container py-10 sm:py-20">
+        <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center gap-6 sm:gap-8">
+          <Card className="w-full max-w-lg border-2">
+            <CardHeader className="text-center">
+              <Shield className="mx-auto h-16 w-16 text-primary" />
+              <CardTitle className="text-2xl sm:text-3xl">Connect Your Wallet</CardTitle>
+              <CardDescription className="text-base">
+                Connect your wallet to access the AnonFund platform
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex justify-center">
+                <ConnectButton />
+              </div>
 
-                {!isConnected && (
-                    <button type="button" onClick={() => void connect()} disabled={loading} className={styles.primaryCenter}>
-                        Connect Wallet
-                    </button>
-                )}
-
-                {isConnected && (
-                    <div className={styles.statusBox}>
-                        <span>Status</span>
-                        <strong>Connected</strong>
-                        <code>{shortAddress}</code>
-                    </div>
-                )}
-
-                {isConnected && !isVerified && (
-                    <div className={styles.notice}>
-                        Anon Aadhaar verification is required before voting. <Link href="/register">Verify now</Link>.
-                    </div>
-                )}
-
-                {isConnected && isVerified && (
-                    <div className={styles.notice}>
-                        Wallet connected and Anon Aadhaar verified. <Link href="/dashboard">Continue to dashboard</Link>.
-                    </div>
-                )}
-
-                {isConnected && (
-                    <div className={styles.actions}>
-                        <button type="button" onClick={() => void connect()} disabled={loading || isConnected} className={styles.primary}>
-                            Connect Wallet
-                        </button>
-                        <button type="button" onClick={disconnect} disabled={loading || !isConnected} className={styles.ghost}>
-                            Disconnect
-                        </button>
-                        <Link href="/register" className={styles.secondary} aria-disabled={!isConnected}>
-                            Continue To Verify
-                        </Link>
-                    </div>
-                )}
-
-                <h3 className={styles.whyTitle}>Why connect your wallet?</h3>
-                <ul className={styles.benefitList}>
-                    <li>Register as a verified voter with Anon Aadhaar</li>
-                    <li>Participate in quadratic funding rounds</li>
-                    <li>Vote anonymously on project proposals</li>
-                    <li>Submit your own projects for funding</li>
+              <div className="space-y-4">
+                <h4 className="text-center font-semibold">Why connect your wallet?</h4>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span>•</span>
+                    <span>Register as a verified voter with Anon Aadhaar</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span>•</span>
+                    <span>Participate in quadratic funding rounds</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span>•</span>
+                    <span>Vote anonymously on project proposals</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span>•</span>
+                    <span>Submit your own projects for funding</span>
+                  </li>
                 </ul>
+              </div>
 
-                <div className={styles.privacyNotice}>
-                    <strong>Privacy Notice:</strong> Your wallet address is used only for authentication. All votes are completely anonymous through zero-knowledge proofs.
-                </div>
-            </section>
-        </main>
-    );
+              <div className="rounded-lg border bg-muted/50 p-4">
+                <p className="text-xs text-muted-foreground">
+                  <strong>Privacy Notice:</strong> Your wallet address is used only for
+                  authentication. All votes are completely anonymous through zero-knowledge proofs.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
 }
