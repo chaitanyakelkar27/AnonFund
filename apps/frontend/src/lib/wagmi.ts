@@ -1,17 +1,14 @@
 "use client";
 
-import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { injected, walletConnect } from "wagmi/connectors";
 import { createConfig, http } from "wagmi";
 import { sepolia } from "wagmi/chains";
 
-export const appName = "AnonFund";
-
 export const walletConnectProjectId =
     process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
 
-const metadata = {
-    name: appName,
+const walletConnectMetadata = {
+    name: "AnonFund",
     description: "AnonFund privacy-preserving quadratic funding",
     url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
     icons: ["https://avatars.githubusercontent.com/u/37784886"]
@@ -19,45 +16,66 @@ const metadata = {
 
 export const chains = [sepolia] as const;
 
+const connectors = [
+    injected(),
+    ...(typeof window !== "undefined" && walletConnectProjectId
+        ? [
+              walletConnect({
+                  projectId: walletConnectProjectId,
+                  metadata: walletConnectMetadata,
+                  showQrModal: false
+              })
+          ]
+        : [])
+];
+
 export const wagmiConfig = createConfig({
     chains,
-    connectors: [
-        injected(),
-        walletConnect({
-            projectId: walletConnectProjectId,
-            metadata,
-            showQrModal: false
-        })
-    ],
+    connectors,
     transports: {
         [sepolia.id]: http()
     }
 });
 
 let modalInitialized = false;
+let modalInitPromise: Promise<void> | null = null;
 let modalInstance: { open: (params?: unknown) => Promise<unknown> } | null = null;
 
-export function initializeWeb3Modal(): void {
+export async function initializeWeb3Modal(): Promise<void> {
     if (typeof window === "undefined" || modalInitialized || !walletConnectProjectId) {
         return;
     }
 
-    const created = createWeb3Modal({
-        wagmiConfig,
-        projectId: walletConnectProjectId,
-        themeMode: "dark",
-        themeVariables: {
-            "--w3m-accent": "#2d6cff"
-        }
-    });
+    if (modalInitPromise) {
+        await modalInitPromise;
+        return;
+    }
 
-    modalInstance = created as unknown as { open: (params?: unknown) => Promise<unknown> };
+    modalInitPromise = (async () => {
+        const { createWeb3Modal } = await import("@web3modal/wagmi/react");
 
-    modalInitialized = true;
+        const created = createWeb3Modal({
+            wagmiConfig,
+            projectId: walletConnectProjectId,
+            themeMode: "dark",
+            themeVariables: {
+                "--w3m-accent": "#2d6cff"
+            }
+        });
+
+        modalInstance = created as unknown as { open: (params?: unknown) => Promise<unknown> };
+        modalInitialized = true;
+    })();
+
+    try {
+        await modalInitPromise;
+    } finally {
+        modalInitPromise = null;
+    }
 }
 
 export async function openWalletModal(): Promise<boolean> {
-    initializeWeb3Modal();
+    await initializeWeb3Modal();
 
     if (!modalInstance) {
         return false;

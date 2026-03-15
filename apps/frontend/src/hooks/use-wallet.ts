@@ -4,8 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { initializeWeb3Modal, openWalletModal } from "@/lib/wagmi";
 
-initializeWeb3Modal();
-
 type VerificationState = {
     isVerified: boolean;
     voiceCredits: number;
@@ -40,6 +38,10 @@ export function useWallet(): UseWalletResult {
 
     const [state, setState] = useState<VerificationState>(initialState);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        void initializeWeb3Modal();
+    }, []);
 
     useEffect(() => {
         if (!address) {
