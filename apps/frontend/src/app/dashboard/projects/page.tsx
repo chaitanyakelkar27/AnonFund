@@ -14,13 +14,13 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ModeToggle } from "@/components/mode-toggle";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ProtectedRoute } from "@/components/protected-route";
+import { BrandMark } from "@/components/brand-mark";
 import { fetchFromIPFS } from "@/lib/storage/ipfs";
 import { Project, ProjectMetadata, ProjectStatus } from "@/types";
 import { PROJECT_ABI, PROJECT_ADDRESS } from "@/contracts";
@@ -303,13 +303,7 @@ export default function ProjectsPage() {
               href="/dashboard"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <Image
-                src="/logo.svg"
-                alt="AnonFund Logo"
-                width={32}
-                height={32}
-                className="h-8 w-8"
-              />
+              <BrandMark />
               <span className="text-xl font-bold">AnonFund</span>
             </Link>
             <div className="flex items-center gap-2 sm:gap-4">

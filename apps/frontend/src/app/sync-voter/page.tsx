@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { BrandMark } from "@/components/brand-mark";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, CheckCircle2, AlertCircle, ArrowLeft } from "lucide-react";
@@ -127,7 +127,7 @@ export default function SyncVoterData() {
             <nav className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
                 <div className="container flex h-16 items-center justify-between">
                     <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                        <Image src="/logo.svg" alt="AnonFund Logo" width={32} height={32} className="h-8 w-8" />
+                        <BrandMark />
                         <span className="text-xl font-bold">AnonFund</span>
                     </Link>
                     <div className="flex items-center gap-2 sm:gap-4">

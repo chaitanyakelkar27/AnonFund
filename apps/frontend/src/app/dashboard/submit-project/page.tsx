@@ -6,11 +6,11 @@ import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseEther } from "viem";
 import { House, ArrowLeft, LoaderCircle, CircleCheck, TriangleAlert, Upload } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ProtectedRoute } from "@/components/protected-route";
+import { BrandMark } from "@/components/brand-mark";
 import { uploadToIPFS, uploadImageToIPFS } from "@/lib/storage/ipfs";
 import { ProjectMetadata } from "@/types";
 import { PROJECT_ABI, PROJECT_ADDRESS } from "@/contracts";
@@ -117,7 +117,7 @@ export default function SubmitProjectPage() {
                 <nav className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
                     <div className="container flex h-16 items-center justify-between">
                         <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                            <Image src="/logo.svg" alt="AnonFund Logo" width={32} height={32} className="h-8 w-8" />
+                            <BrandMark />
                             <span className="text-xl font-bold">AnonFund</span>
                         </Link>
                         <div className="flex items-center gap-2 sm:gap-4">

@@ -50,29 +50,25 @@
     font-weight: 700;
 }
 
-.brandLogo {
-    width: 2rem;
-    height: 2rem;
+.brandMark {
+    display: grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(145deg, #e7eaff, #d7dcff);
+    border: 1px solid #c6cef8;
+    color: #414abf;
+    font-size: 0.95rem;
 }
 
-.nav {
-    display: flex;
-    align-items: center;
-    gap: 1.4rem;
-}
-
-.nav a {
-    color: var(--text-dim);
-    font-weight: 600;
-    transition: color 180ms ease;
-}
-
-.nav a:hover {
-    color: var(--text);
+:global(.dark) .brandMark {
+    background: linear-gradient(145deg, #0d1731, #102658);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #7fb6ff;
 }
 
 .launchLink {
-    border: 1px solid var(--line);
     border-radius: 0.75rem;
     padding: 0.56rem 0.9rem;
     font-weight: 700;

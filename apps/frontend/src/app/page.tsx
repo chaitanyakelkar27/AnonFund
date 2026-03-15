@@ -1,7 +1,7 @@
 import { Manrope, Space_Grotesk } from "next/font/google";
 import styles from "./page.module.css";
 import { ModeToggle } from "@/components/mode-toggle";
-import Image from "next/image";
+import { BrandMark } from "@/components/brand-mark";
 
 const headingFont = Space_Grotesk({
     subsets: ["latin"],
@@ -122,7 +122,7 @@ export default function HomePage(): React.JSX.Element {
 
             <header className={styles.header}>
                 <a href="#home" className={styles.brand}>
-                    <Image src="/logo.svg" alt="AnonFund Logo" width={30} height={30} className={styles.brandLogo} />
+                    <BrandMark />
                     <span>AnonFund</span>
                 </a>
 

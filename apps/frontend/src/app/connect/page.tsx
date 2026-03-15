@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { Shield, ArrowLeft } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { BrandMark } from "@/components/brand-mark";
 import { VOTER_REGISTRY_ADDRESS, VOTER_REGISTRY_ABI } from "@/contracts";
 
 export default function ConnectPage() {
@@ -48,7 +48,7 @@ export default function ConnectPage() {
       <nav className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Image src="/logo.svg" alt="AnonFund Logo" width={32} height={32} className="h-8 w-8" />
+            <BrandMark />
             <span className="text-xl font-bold">AnonFund</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
