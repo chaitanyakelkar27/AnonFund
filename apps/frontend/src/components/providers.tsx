@@ -1,18 +1,47 @@
 "use client";
 
-import { ReactNode } from "react";
-import dynamic from "next/dynamic";
-import { ThemeProvider } from "@/components/theme-provider";
+import { WagmiProvider } from "wagmi";
+import { getConfig } from "@/lib/wagmi";
+import "@rainbow-me/rainbowkit/styles.css";
+import { useState, useEffect } from "react";
+import { ThemeProvider, useTheme } from "next-themes";
+import { AnonAadhaarProvider } from "@anon-aadhaar/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { darkTheme, lightTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 
-const WalletLayer = dynamic(
-    () => import("@/components/wallet-layer").then((mod) => mod.WalletLayer),
-    { ssr: false }
-);
+function RainbowKitWithTheme({ children }: { children: React.ReactNode }) {
+  const { resolvedTheme } = useTheme();
 
-export function Providers({ children }: { children: ReactNode }): React.JSX.Element {
-    return (
-        <ThemeProvider>
-            <WalletLayer>{children}</WalletLayer>
-        </ThemeProvider>
-    );
+  return (
+    <RainbowKitProvider theme={resolvedTheme === "dark" ? darkTheme() : lightTheme()}>
+      {children}
+    </RainbowKitProvider>
+  );
+}
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  const [queryClient] = useState(() => new QueryClient());
+  const [config, setConfig] = useState<ReturnType<typeof getConfig> | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    setConfig(getConfig());
+  }, []);
+
+  if (!mounted || !config) {
+    return null;
+  }
+
+  return (
+    <ThemeProvider enableSystem attribute="class" defaultTheme="system" disableTransitionOnChange>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <AnonAadhaarProvider _useTestAadhaar={true}>
+            <RainbowKitWithTheme>{children}</RainbowKitWithTheme>
+          </AnonAadhaarProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ThemeProvider>
+  );
 }

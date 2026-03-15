@@ -59,7 +59,7 @@ export type ProjectOnChain = {
 };
 
 export type Project = ProjectMetadata & {
-    id: bigint;
+    id: number;
     status: ProjectStatus;
     submitter: string;
     currentFunding: string;

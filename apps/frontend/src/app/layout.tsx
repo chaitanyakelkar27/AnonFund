@@ -1,27 +1,29 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/providers";
-import "./globals.css";
 
-const appFont = Inter({
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700", "800"],
-    variable: "--font-base"
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-    title: "AnonFund",
-    description: "AnonFund decentralized funding platform"
+  title: "AnonFund - Decentralized Quadratic Funding Platform",
+  description:
+    "A decentralized platform enabling communities to fairly allocate treasury funds to public good projects through quadratic voting and funding, while maintaining complete voter anonymity and preventing sybil attacks with Anon Aadhaar integration.",
 };
 
-export const dynamic = "force-dynamic";
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <html lang="en">
-            <body className={appFont.variable}>
-                <Providers>{children}</Providers>
-            </body>
-        </html>
-    );
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={`antialiased ${inter.variable}`}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
 }

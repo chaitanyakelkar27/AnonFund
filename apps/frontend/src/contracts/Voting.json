@@ -1,5 +1,5 @@
 {
-  "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+  "address": "0x11691BBF34E542C116539A66023F2d4413e46D4f",
   "abi": [
     {
       "type": "constructor",
@@ -228,8 +228,12 @@
       "payable": false,
       "inputs": [
         {
+          "type": "address",
+          "name": "voter"
+        },
+        {
           "type": "uint256",
-          "name": "nullifierHash"
+          "name": "roundId"
         }
       ],
       "outputs": [
@@ -431,11 +435,15 @@
     },
     {
       "type": "function",
-      "name": "voterCredits",
+      "name": "voterCreditsPerRound",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
       "inputs": [
+        {
+          "type": "address",
+          "name": ""
+        },
         {
           "type": "uint256",
           "name": ""
