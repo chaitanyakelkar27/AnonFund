@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "circom2": "^0.2.22",
     "typescript": "^5.0.0"
   }
 }

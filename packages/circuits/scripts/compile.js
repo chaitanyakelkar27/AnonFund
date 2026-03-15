@@ -13,6 +13,8 @@ const projectRoot = path.resolve(rootDir, '../..');
 const artifactsDir = path.join(rootDir, 'artifacts');
 const frontendDir = path.join(projectRoot, 'apps/frontend/src/circuits');
 const blockchainDir = path.join(projectRoot, 'apps/blockchain/contracts');
+const localNodeModules = path.join(rootDir, 'node_modules');
+const workspaceNodeModules = path.join(projectRoot, 'node_modules');
 
 function ensureDir(dir) {
     if (!fs.existsSync(dir)) {
@@ -45,7 +47,7 @@ function compile() {
 
         try {
             execSync(
-                `circom ${inputPath} --r1cs --wasm --sym --c -o ${outputDir}`,
+                `circom2 ${inputPath} --r1cs --wasm --sym --c -l ${rootDir} -l ${projectRoot} -l ${localNodeModules} -l ${workspaceNodeModules} -o ${outputDir}`,
                 { stdio: 'inherit', cwd: rootDir }
             );
 

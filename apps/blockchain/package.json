@@ -11,6 +11,7 @@
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "deploy": "hardhat run scripts/deploy.ts",
+    "deploy:sepolia:all": "hardhat run scripts/deploy-sepolia.ts --network sepolia",
     "deploy:verifier": "hardhat run scripts/deploy-verifier.ts",
     "deploy:voting": "hardhat run scripts/deploy-voting.ts",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",

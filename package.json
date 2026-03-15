@@ -13,6 +13,7 @@
     "clean": "turbo clean && rm -rf node_modules"
   },
   "devDependencies": {
+    "circomlib": "^2.0.5",
     "prettier": "^3.4.2",
     "turbo": "^2.3.3",
     "typescript": "^5.8.3"
