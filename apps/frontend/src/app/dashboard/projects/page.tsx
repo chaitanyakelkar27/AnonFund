@@ -8,6 +8,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { PROJECT_ABI, PROJECT_ADDRESS } from "@/contracts";
 import { useVoting } from "@/hooks/useVoting";
 import { useWallet } from "@/hooks/use-wallet";
+import { fetchFromIPFS } from "@/lib/storage/ipfs";
 import styles from "../dashboard.module.css";
 
 type ProjectStatus = "Pending" | "Active" | "Funded" | "Completed";
@@ -43,6 +44,14 @@ type LocalStoredProject = {
     requestedFunding: string;
     imageUrl?: string;
     milestonesCount?: number;
+};
+
+type ProjectMetadata = {
+    title: string;
+    description: string;
+    category?: string;
+    milestones?: unknown[];
+    imageUrl?: string;
 };
 
 function isConfiguredContract(address: `0x${string}`, abi: unknown[]): boolean {
@@ -159,53 +168,71 @@ export default function ProjectsPage(): React.JSX.Element {
             return;
         }
 
-        const chainProjects = (allProjectsData as Array<Record<string, unknown>>)
-            .map((projectData): ProjectItem | null => {
-                const id = Number(projectData.id);
-                const requestedFundingRaw = projectData.requestedFunding as bigint | undefined;
-                const currentFundingRaw = projectData.receivedFunding as bigint | undefined;
-                const statusRaw = Number(projectData.status ?? 0);
-                const metadataUri = String(projectData.metadataURI ?? "");
+        let isActive = true;
 
-                if (!id) {
-                    return null;
-                }
+        const loadProjects = async () => {
+            const chainProjects = await Promise.all(
+                (allProjectsData as Array<Record<string, unknown>>).map(async (projectData): Promise<ProjectItem | null> => {
+                    const id = Number(projectData.id);
+                    const requestedFundingRaw = projectData.requestedFunding as bigint | undefined;
+                    const currentFundingRaw = projectData.receivedFunding as bigint | undefined;
+                    const statusRaw = Number(projectData.status ?? 0);
+                    const metadataUri = String(projectData.metadataURI ?? "");
 
-                let parsedMetadata: any = null;
-                try {
-                    if (metadataUri.startsWith("{")) {
-                        parsedMetadata = JSON.parse(metadataUri);
+                    if (!id) {
+                        return null;
                     }
-                } catch {
-                    // Ignore parsing errors for old/invalid test data
-                }
 
-                const title = parsedMetadata?.title;
-                const description = parsedMetadata?.description;
+                    let parsedMetadata: ProjectMetadata | null = null;
+                    try {
+                        if (metadataUri.startsWith("{")) {
+                            parsedMetadata = JSON.parse(metadataUri) as ProjectMetadata;
+                        } else if (metadataUri) {
+                            const cid = metadataUri.startsWith("ipfs://") ? metadataUri.replace("ipfs://", "") : metadataUri;
+                            parsedMetadata = await fetchFromIPFS<ProjectMetadata>(cid);
+                        }
+                    } catch {
+                        // Ignore parsing errors for old/invalid test data
+                    }
 
-                // Filter out dummy/test projects that don't have proper parsed metadata
-                if (!title || !description) {
-                    return null;
-                }
+                    const title = parsedMetadata?.title;
+                    const description = parsedMetadata?.description;
 
-                return {
-                    id,
-                    title: title,
-                    description: description,
-                    category: parsedMetadata.category || "other",
-                    requestedFunding: requestedFundingRaw ? (Number(requestedFundingRaw) / 1e18).toFixed(2) : "0",
-                    currentFunding: currentFundingRaw ? (Number(currentFundingRaw) / 1e18).toFixed(2) : "0",
-                    status: parseStatus(statusRaw),
-                    contributorsCount: 0,
-                    milestonesCount: Array.isArray(parsedMetadata.milestones) ? parsedMetadata.milestones.length : 0,
-                    imageUrl: parsedMetadata.imageUrl ? normalizeIpfsUrl(parsedMetadata.imageUrl) : undefined,
-                };
-            })
-            .filter((project): project is ProjectItem => project !== null);
+                    // Filter out dummy/test projects that don't have proper parsed metadata
+                    if (!title || !description) {
+                        return null;
+                    }
 
-        if (chainProjects.length > 0) {
-            setProjects(chainProjects);
-        }
+                    return {
+                        id,
+                        title: title,
+                        description: description,
+                        category: parsedMetadata.category || "other",
+                        requestedFunding: requestedFundingRaw ? (Number(requestedFundingRaw) / 1e18).toFixed(2) : "0",
+                        currentFunding: currentFundingRaw ? (Number(currentFundingRaw) / 1e18).toFixed(2) : "0",
+                        status: parseStatus(statusRaw),
+                        contributorsCount: 0,
+                        milestonesCount: Array.isArray(parsedMetadata.milestones) ? parsedMetadata.milestones.length : 0,
+                        imageUrl: parsedMetadata.imageUrl ? normalizeIpfsUrl(parsedMetadata.imageUrl) : undefined,
+                    };
+                })
+            );
+
+            if (!isActive) {
+                return;
+            }
+
+            const filtered = chainProjects.filter((project): project is ProjectItem => project !== null);
+            if (filtered.length > 0) {
+                setProjects(filtered);
+            }
+        };
+
+        void loadProjects();
+
+        return () => {
+            isActive = false;
+        };
     }, [allProjectsData]);
 
     useEffect(() => {

@@ -8,6 +8,7 @@ import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ModeToggle } from "@/components/mode-toggle";
 import { ProtectedRoute } from "@/components/protected-route";
 import { PROJECT_ABI, PROJECT_ADDRESS } from "@/contracts";
+import { uploadImageToIPFS, uploadToIPFS } from "@/lib/storage/ipfs";
 import styles from "../dashboard.module.css";
 
 type Milestone = {
@@ -99,6 +100,14 @@ export default function SubmitProjectPage(): React.JSX.Element {
         setLocalError(null);
 
         try {
+            if (requestedFunding && Number(requestedFunding) > 0.001) {
+                throw new Error("Funding limit is 0.001 ETH.");
+            }
+            let imageUrl: string | undefined;
+            if (imageFile) {
+                imageUrl = await uploadImageToIPFS(imageFile);
+            }
+
             const metadata: ProjectMetadata = {
                 title,
                 description,
@@ -123,8 +132,10 @@ export default function SubmitProjectPage(): React.JSX.Element {
                     : [],
                 requestedFunding,
                 category,
-                imageUrl: imagePreview || undefined,
+                imageUrl,
             };
+
+            const metadataUri = await uploadToIPFS(metadata);
 
             // Ensure any old local mock data is cleared out
             if (typeof window !== "undefined") {
@@ -139,7 +150,7 @@ export default function SubmitProjectPage(): React.JSX.Element {
                 address: PROJECT_ADDRESS,
                 abi: PROJECT_ABI,
                 functionName: "submitProject",
-                args: [JSON.stringify(metadata), parseEther(requestedFunding || "0")],
+                args: [metadataUri, parseEther(requestedFunding || "0")],
             });
         } catch (submitError) {
             const fallbackMessage = submitError instanceof Error ? submitError.message : "Failed to submit project";
@@ -261,7 +272,8 @@ export default function SubmitProjectPage(): React.JSX.Element {
                                             id="funding"
                                             type="number"
                                             min="0"
-                                            step="0.01"
+                                            max="0.001"
+                                            step="0.0001"
                                             required
                                             value={requestedFunding}
                                             onChange={(event) => setRequestedFunding(event.target.value)}

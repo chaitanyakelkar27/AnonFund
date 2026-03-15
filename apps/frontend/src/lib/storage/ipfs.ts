@@ -1,14 +1,25 @@
-export const PINATA_JWT = process.env.NEXT_PUBLIC_PINATA_JWT!;
-export const PINATA_GATEWAY =
-    process.env.NEXT_PUBLIC_PINATA_GATEWAY || "https://gateway.pinata.cloud";
+const DEFAULT_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
+export const PINATA_GATEWAY = process.env.NEXT_PUBLIC_PINATA_GATEWAY || DEFAULT_GATEWAY;
+
+function normalizeGateway(base: string): string {
+    if (!base) {
+        return DEFAULT_GATEWAY;
+    }
+
+    const trimmed = base.endsWith("/") ? base : `${base}/`;
+    if (trimmed.includes("/ipfs/")) {
+        return trimmed;
+    }
+
+    return `${trimmed}ipfs/`;
+}
 
 export async function uploadToIPFS(data: object): Promise<string> {
     try {
-        const response = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+        const response = await fetch("/api/ipfs/json", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${PINATA_JWT}`,
             },
             body: JSON.stringify({
                 pinataContent: data,
@@ -19,11 +30,13 @@ export async function uploadToIPFS(data: object): Promise<string> {
         });
 
         if (!response.ok) {
-            throw new Error("Failed to upload to IPFS");
+            const errorText = await response.text();
+            const message = errorText ? `Failed to upload to IPFS: ${errorText}` : "Failed to upload to IPFS";
+            throw new Error(message);
         }
 
         const result = await response.json();
-        return result.IpfsHash;
+        return result.cid;
     } catch (error) {
         console.error("IPFS upload error:", error);
         throw error;
@@ -32,7 +45,7 @@ export async function uploadToIPFS(data: object): Promise<string> {
 
 export async function fetchFromIPFS<T>(cid: string): Promise<T> {
     try {
-        const url = `${PINATA_GATEWAY}${cid}`;
+        const url = `${normalizeGateway(PINATA_GATEWAY)}${cid}`;
         console.log("Fetching from IPFS:", url);
         const response = await fetch(url);
         if (!response.ok) {
@@ -53,20 +66,19 @@ export async function uploadImageToIPFS(file: File): Promise<string> {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+        const response = await fetch("/api/ipfs/file", {
             method: "POST",
-            headers: {
-                Authorization: `Bearer ${PINATA_JWT}`,
-            },
             body: formData,
         });
 
         if (!response.ok) {
-            throw new Error("Failed to upload image");
+            const errorText = await response.text();
+            const message = errorText ? `Failed to upload image: ${errorText}` : "Failed to upload image";
+            throw new Error(message);
         }
 
         const result = await response.json();
-        const imageUrl = `${PINATA_GATEWAY}${result.IpfsHash}`;
+        const imageUrl = `${normalizeGateway(PINATA_GATEWAY)}${result.cid}`;
         console.log("Image uploaded to IPFS:", imageUrl);
         return imageUrl;
     } catch (error) {
