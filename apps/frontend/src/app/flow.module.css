@@ -79,8 +79,6 @@
     background: var(--surface);
 }
 
-/* ─── Centered Panel (Connect page — ZeroTrace style) ─── */
-
 .centeredPanel {
     width: min(560px, 100%);
     margin: 3rem auto;
