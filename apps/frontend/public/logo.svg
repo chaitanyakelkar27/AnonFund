@@ -1,0 +1,8 @@
+<svg width="800" height="800" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" rx="88" fill="#0A1F1A"/>
+  <circle cx="200" cy="200" r="132" fill="#11382E"/>
+  <path d="M200 84L292 126V206C292 268 248 324 200 344C152 324 108 268 108 206V126L200 84Z" fill="#22C55E"/>
+  <path d="M200 126L248 148V206C248 240 226 272 200 288C174 272 152 240 152 206V148L200 126Z" fill="#E8FFF3"/>
+  <path d="M170 247L200 165L230 247H215L208 226H192L185 247H170ZM196 213H204L200 201L196 213Z" fill="#14532D"/>
+  <text x="200" y="74" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#86EFAC">AF</text>
+</svg>
